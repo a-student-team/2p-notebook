@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Editor</title>
+    <style type="text/css">
+    small{font-size: 14px;color: #aaa;}
+    pre{padding: 5px;background-color: #eee;}
+    .textcenter{text-align: center;}
+    </style>
+  </head>
+  
+    <input type="text" id="file_name" value="title">
+    <underline1></underline1>
+    <br>
+
+    <textarea id="editor" name="editor" rows="5" style="display: none;"></textarea>
+
+    <script src="HandyEditor.min.js"></script>
+    <script src="jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+      var he = HE.getEditor('editor');
+      function getHtml(){
+        alert(he.getHtml());
+      }
+      function getText(){
+        alert(he.getText());
+      }
+    </script>
+
+  </body>
+  
+</html>
