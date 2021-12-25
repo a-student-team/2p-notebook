@@ -188,11 +188,15 @@ class MyFrame1 (wx.Frame):
         self.note_list.Bind(wx.EVT_RIGHT_DOWN, self.show_menu)
         self.Bind(wx.EVT_MENU, self.menuHandler)
         self.note_list.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.open_note)
+        self.Bind(wx.EVT_CLOSE, self.on_close)
 
     def __del__(self):
         pass
 
     # Virtual event handlers, override them in your derived class
+    def on_close(self, event):
+        event.Skip()
+
     def open_note(self, event):
         event.Skip()
 
@@ -281,13 +285,25 @@ class NoBorderFrame(wx.Frame):
         if event.LeftDown():
             self.CaptureMouse()
             self.pos = event.GetPosition()
+
+        elif event.LeftUp():
+            self.ReleaseMouse()
+
+        elif event.Dragging():
+            if self.HasCapture():
+                pos = event.GetPosition()
+                self.Move(self.GetPosition() + pos)
+                self.pos = pos
+        '''if event.LeftDown():
+            self.CaptureMouse()
+            self.pos = event.GetPosition()
         elif event.LeftUp():
             self.ReleaseMouse()
         elif event.Dragging():
             if self.HasCapture():
                 self.Move(self.GetPosition() + event.GetPosition())
                 self.pos = event.GetPosition()
-        event.Skip()
+        event.Skip()'''
 
 
 class FastNote (NoBorderFrame):  # 便签

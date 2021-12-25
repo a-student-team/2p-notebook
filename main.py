@@ -72,14 +72,32 @@ class MainFrame(MyFrame1):
         # self._updata_note_data()
         print(file_path)
         
+        
         with open(file_path, 'w', encoding="utf-8") as f:
             f.write(str(self.note_data))
     
     def get_note_data_in_file(self, file_path=get_file('\\data\\main.note')):
+        
+        if file_path == get_file('\\data\\main.note'):
+            # main.note file exist
+            if not os.path.exists(file_path):
+                return False
+            # make a list about note local files,use os.listdir to get all files in the dir
+            importlist = os.listdir(os.path.dirname(os.path.abspath(__file__)) + '\\data')
+            #read note data from local files
+            for file in importlist:
+                if file.endswith('.note'):
+                    with open(os.path.dirname(os.path.abspath(__file__)) + '\\data\\' + file, 'r', encoding="utf-8") as f:
+                        try:
+                            self.note_data.update(eval(f.read()))
+                        except:
+                            pass
+            return True
         # read note_data from local file
         with open(file_path, 'r', encoding="utf-8") as f:
             try:
                 self.note_data = eval(f.read())
+                return True
             except:
                 return False
 
@@ -171,8 +189,9 @@ class MainFrame(MyFrame1):
     def save_as(self, event):
         # use file dialog(only xxx.note) to get file name, and save data
         # if save successfully, show a dialog for user
+        # dialog's default path is get_file("\\data")
         dialog = wx.FileDialog(
-            self, message="保存文件", defaultDir=os.getcwd(),
+            self, message="保存文件", defaultDir=get_file("\\data"),
             defaultFile="", wildcard="*.note", style=wx.FD_SAVE)
         if dialog.ShowModal() == wx.ID_OK:
             if self.write_note_data_to_file(dialog.GetPath()) == False:
@@ -181,10 +200,7 @@ class MainFrame(MyFrame1):
                 dialog.ShowModal()
                 dialog.Destroy()
                 return None
-            dialog_success = wx.MessageDialog(
-                self, '保存成功', '提示', wx.OK | wx.ICON_INFORMATION)
-            dialog_success.ShowModal()
-            dialog_success.Destroy()
+            
         dialog.Destroy()
     def save(self, event):
         self.write_note_data_to_file()
@@ -250,7 +266,7 @@ class MainFrame(MyFrame1):
             edit_browser.Bind(wx.EVT_CLOSE, lambda event: self.edit_browser_close(event, root))
             # when it open, give a value to edit_browser.browser
             edit_browser.Bind(html2.EVT_WEBVIEW_LOADED, lambda event: self.edit_browser_open(event, root))
-                        
+            
     def edit_browser_open(self, event, root=None):
         # when edit_browser open, use the html2.runScript to give the value to he
 
@@ -274,9 +290,19 @@ class MainFrame(MyFrame1):
             self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)] = text[1]
             edit_browser.Destroy()
             self.note_list.ExpandAll()
-            self.note_list.Expand(self.note_list.GetRootItem())
-            
-            
+    
+    def on_close(self, event):
+        # ask user save or not
+        # if save, use funcion save()
+        dialog = wx.MessageDialog(
+            self, '是否保存笔记', '提示', wx.YES_NO | wx.ICON_INFORMATION)
+        if dialog.ShowModal() == wx.ID_YES:
+            self.save(None)
+        dialog.Destroy()
+        self.Destroy()
+
+    def __del__(self):
+        pass
 
 class EditFrame(EditFrame1):
     # function for edit note
