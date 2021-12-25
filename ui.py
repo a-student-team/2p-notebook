@@ -36,6 +36,30 @@ class MyFrame1 (wx.Frame):
         self.SetFont(wx.Font(wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT,
                      wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
         self.SetMinSize(wx.Size(600, 400))
+
+        menubar = wx.MenuBar(0)
+        fileMenu = wx.Menu()
+        newMenu = wx.Menu()
+        newMenu.Append(
+            wx.ID_NEW, u"新建笔记", wx.EmptyString, wx.ITEM_NORMAL)
+        newMenu.Append(
+            wx.ID_FILE, u"新建笔记本", wx.EmptyString, wx.ITEM_NORMAL)
+        fileMenu.Append(wx.ID_ANY, u"新建", newMenu)
+        fileMenu.AppendSeparator()
+        fileMenu.Append(
+            wx.ID_OPEN, u"打开", wx.EmptyString, wx.ITEM_NORMAL)
+        fileMenu.AppendSeparator()
+        fileMenu.Append(
+            wx.ID_SAVE, u"保存", wx.EmptyString, wx.ITEM_NORMAL)
+        fileMenu.Append(
+            wx.ID_SAVEAS, u"另存为", wx.EmptyString, wx.ITEM_NORMAL)
+        fileMenu.AppendSeparator()
+        fileMenu.Append(
+            wx.ID_EXIT, u"退出", wx.EmptyString, wx.ITEM_NORMAL)
+        menubar.Append(fileMenu, u"文件")
+        
+        self.SetMenuBar(menubar)
+
         gbSizer1 = wx.GridBagSizer(0, 0)
         gbSizer1.SetFlexibleDirection(wx.BOTH)
         gbSizer1.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
@@ -295,7 +319,7 @@ class FastNote (NoBorderFrame):  # 便签
 
 class MyApp(wx.App):
     def OnInit(self):
-        EditFrame1(None).Show()
+        MyFrame1(None).Show()
 
         return True
 

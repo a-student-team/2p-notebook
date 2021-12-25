@@ -1,10 +1,20 @@
 import wx
-import time
-
 from wx import html2
 
 from ui import MyFrame1, EditFrame1, FastNote
+
 import os
+import uuid
+import random
+import time
+
+
+def random_str(num=6):
+    uln = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    rs = random.sample(uln, num)  # 生成一个 指定位数的随机字符串
+    a = uuid.uuid1()  # 根据 时间戳生成 uuid , 保证全球唯一
+    b = ''.join(rs + str(a).split("-"))  # 生成将随机字符串 与 uuid拼接
+    return b  # 返回随机字符串
 
 
 def get_file(file_name):
@@ -14,36 +24,63 @@ def get_file(file_name):
     '''
     return os.path.dirname(os.path.abspath(__file__)) + file_name
 
+class Paper(object):
+    def __init__(self, title="标题", content="内容"):
+        self.title = title
+        self.content = content
+        self.time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        self.uuid = random_str()
+
+    def __repr__(self):
+        return '<Paper title: %s, content: %s, time: %s, uuid: %s>' % (self.title, self.content, self.time, self.uuid)
+
+
 
 class MainFrame(MyFrame1):
     def __init__(self, parent):
         MyFrame1.__init__(self, parent)
         self.root = self.note_list.AddRoot("所有笔记")
-        self.root_note = []  # list of book name
-
+        self.books = {}  # dict of book name
         self.note_list.ExpandAll()  # ?
+        
+        # the data like {'book':{'note':'content',...},...}
+        self.note_data = {}
 
-        # the data for local file
-        # the data for write to local file, like {'book':{'note':'content'}}
-        self.note_local_data = {}
+        
 
-    def _change_note_local_data(self):
-        # change the note_local_data
-        for book in self.root_note:
-            self.note_local_data[book] = {}
-            for child in self.note_list.GetChildren(self.note_list.GetRootItem()):
-                if self.note_list.GetItemText(child) == book:
-                    for note in self.note_list.GetChildren(child):
-                        self.note_local_data[book][self.note_list.GetItemText(
-                            note)] = self.note_list.GetItemText(note, 1)
+    def _updata_note_data(self):
+        # update data
+        pass
+
+    def write_note_data_to_file(self, file_path=get_file('\\data\\main.note')):
+        #write note_data to local file
+        '''
+        param file_name: relative file path, like 'test.note'
+        '''
+        # self._updata_note_data()
+        print(file_path)
+        
+        with open(file_path, 'w', encoding="utf-8") as f:
+            f.write(str(self.note_data))
+    
+    def get_note_data_in_file(self, file_path=get_file('\\data\\main.note')):
+        # read note_data from local file
+        with open(file_path, 'r', encoding="utf-8") as f:
+            try:
+                self.note_data = eval(f.read())
+            except:
+                return False
 
     def new_paper(self, event):
         # get selected item and append new item in it
         root = self.note_list.GetSelection()
-        # if root is paper, root = root.parent
-        if self.note_list.GetItemParent(root) != self.root:
-            root = self.note_list.GetItemParent(root)
+        print(root)
+        
+
         try:
+            # if root is paper, root = root.parent
+            if self.note_list.GetItemParent(root) != self.root:
+                root = self.note_list.GetItemParent(root)
 
             self.note_list.Expand(root)
             self.note_list.ExpandAll()
@@ -60,22 +97,27 @@ class MainFrame(MyFrame1):
             return None
 
         self.note_list.AppendItem(root, name)
+
         self.note_list.Expand(root)
         self.note_list.ExpandAll()
+
+        self.note_data[self.note_list.GetItemText(root)][name] = '内容'
+
 
     def new_book(self, event):
 
         name = CreateDialog(self, "新笔记本").m_textCtrl1.GetValue()
+        
 
         if name == '':
             return None
-
+        
         book = self.note_list.AppendItem(self.root, name)
         self.note_list.Expand(book)
         self.note_list.ExpandAll()
-        self.root_note.append(name)
-
-        print(self.root_note, self.note_list)
+        self.books[name] = book
+        self.note_data[name] = {}
+        print(self.books, self.note_list)
 
     def new_note(self, event):
         FastNote(self).Show()
@@ -104,8 +146,63 @@ class MainFrame(MyFrame1):
             self.delete_paper(event)
         elif id == wx.ID_FILE:
             self.new_book(event)
+        elif id == wx.ID_EXIT:
+            self.Close()
+        elif id == wx.ID_OPEN:
+            self.open(event)
+        elif id == wx.ID_SAVE:
+            self.save(event)
+        elif id == wx.ID_SAVEAS:
+            self.save_as(event)
         else:
             event.Skip()
+    def save_as(self, event):
+        # use file dialog(only xxx.note) to get file name, and save data
+        # if save successfully, show a dialog for user
+        dialog = wx.FileDialog(
+            self, message="保存文件", defaultDir=os.getcwd(),
+            defaultFile="", wildcard="*.note", style=wx.FD_SAVE)
+        if dialog.ShowModal() == wx.ID_OK:
+            if self.write_note_data_to_file(dialog.GetPath()) == False:
+                dialog = wx.MessageDialog(
+                    self, '保存失败', '提示', wx.OK | wx.ICON_INFORMATION)
+                dialog.ShowModal()
+                dialog.Destroy()
+                return None
+            dialog_success = wx.MessageDialog(
+                self, '保存成功', '提示', wx.OK | wx.ICON_INFORMATION)
+            dialog_success.ShowModal()
+            dialog_success.Destroy()
+        dialog.Destroy()
+    def save(self, event):
+        self.write_note_data_to_file()
+        dialog = wx.MessageDialog(self, '保存成功', '提示', wx.OK | wx.ICON_INFORMATION)
+        dialog.ShowModal()
+        dialog.Destroy()
+
+    def open(self, event):
+        # open xxx.note in local file, use file dialog
+        dlg = wx.FileDialog(self, "选择文件", os.getcwd(), "", "*.note", wx.FD_OPEN)
+        if dlg.ShowModal() == wx.ID_OK:
+            if self.get_note_data_in_file(str(dlg.GetPath())) == False:
+                #show a dialog to user
+                print(dlg.GetPath())
+                dialog = wx.MessageDialog(
+                    self, '文件导入失败', '提示', wx.OK | wx.ICON_INFORMATION)
+                dialog.ShowModal()
+                dialog.Destroy()
+                return None
+            self.note_list.DeleteAllItems()
+            self.note_list.AddRoot("所有笔记")
+            for book in self.note_data:
+                book_item = self.note_list.AppendItem(self.note_list.GetRootItem(), book)
+                for note in self.note_data[book]:
+                    self.note_list.AppendItem(book_item, note)
+            self.note_list.ExpandAll()
+            #self.note_list.Expand(self.root)
+            
+        dlg.Destroy()
+
 
     def rename_paper(self, event):
         root = self.note_list.GetSelection()
@@ -134,23 +231,21 @@ class MainFrame(MyFrame1):
         if self.note_list.GetItemParent(root) == self.root:
             return None
         else:
-            edit_browser = EditFrame(self, title="编辑笔记", size=(800, 600), paper_title=self.note_list.GetItemText(root))
+            edit_browser = EditFrame(self, title="编辑笔记", size=(
+                800, 600), paper_title=self.note_list.GetItemText(root))
             edit_browser.browser.LoadURL(get_file('\\html\\edit.html'))
             edit_browser.Show()
 
 
 class EditFrame(EditFrame1):
     # function for edit note
-    def __init__(self, parent, id=wx.ID_ANY, title=wx.EmptyString, size=wx.DefaultSize, pos=wx.DefaultPosition, paper_title = "title"):
+    def __init__(self, parent, id=wx.ID_ANY, title=wx.EmptyString, size=wx.DefaultSize, pos=wx.DefaultPosition, paper_title="title"):
         EditFrame1.__init__(self, parent, id, title, size, pos)
         self.paper_title = paper_title
         self.Bind(html2.EVT_WEBVIEW_LOADED, self.OnPageLoaded,
                   self.browser)
-        
+
     def OnPageLoaded(self, event):
-        # set title to edit
-        self.browser.RunScript(
-            "document.getElementById('file_name').value = '"+self.paper_title+"'")
         event.Skip()
 
 
