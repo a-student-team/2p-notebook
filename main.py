@@ -45,6 +45,18 @@ class MainFrame(MyFrame1):
         
         # the data like {'book':{'note':'content',...},...}
         self.note_data = {}
+        
+        #import data
+        if self.get_note_data_in_file() == False:
+            #create a new main.note file
+            self.write_note_data_to_file()
+        self.note_list.DeleteAllItems()
+        self.note_list.AddRoot("所有笔记")
+        for book in self.note_data:
+            book_item = self.note_list.AppendItem(self.note_list.GetRootItem(), book)
+            for note in self.note_data[book]:
+                self.note_list.AppendItem(book_item, note)
+        self.note_list.ExpandAll()
 
         
 
@@ -235,7 +247,36 @@ class MainFrame(MyFrame1):
                 800, 600), paper_title=self.note_list.GetItemText(root))
             edit_browser.browser.LoadURL(get_file('\\html\\edit.html'))
             edit_browser.Show()
+            edit_browser.Bind(wx.EVT_CLOSE, lambda event: self.edit_browser_close(event, root))
+            # when it open, give a value to edit_browser.browser
+            edit_browser.Bind(html2.EVT_WEBVIEW_LOADED, lambda event: self.edit_browser_open(event, root))
+                        
+    def edit_browser_open(self, event, root=None):
+        # when edit_browser open, use the html2.runScript to give the value to he
 
+        if root == None:
+            return None
+        edit_browser = event.GetEventObject()
+        edit_browser.RunScript(
+            "setText('"+self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)]+"')")
+        
+
+    def edit_browser_close(self, event, root=None):
+        #ask user save or not
+        # if save, use html2.runScript the function getText() to get text and save it into note_data
+        if root == None:
+            root = self.note_list.GetSelection()
+        if self.note_list.GetItemParent(root) == self.root:
+            return None
+        else:
+            edit_browser = event.GetEventObject()
+            text = edit_browser.browser.RunScript("getText()")
+            self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)] = text[1]
+            edit_browser.Destroy()
+            self.note_list.ExpandAll()
+            self.note_list.Expand(self.note_list.GetRootItem())
+            
+            
 
 class EditFrame(EditFrame1):
     # function for edit note

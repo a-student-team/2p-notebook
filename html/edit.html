@@ -11,10 +11,6 @@
     .textcenter{text-align: center;}
     </style>
   </head>
-  
-    <input type="text" id="file_name" value="title">
-    <underline1></underline1>
-    <br>
 
     <textarea id="editor" name="editor" rows="5" style="display: none;"></textarea>
 
@@ -23,13 +19,23 @@
     <script type="text/javascript">
       var he = HE.getEditor('editor');
       function getHtml(){
-        alert(he.getHtml());
+        return he.getHtml();
+
       }
       function getText(){
-        alert(he.getText());
+        return he.getText();
       }
+      
+      
+      /*给变量he一个值*/
+      function setText(html){
+        return he.set(html);
+      }
+      
+      
+      
     </script>
-
+    
   </body>
   
 </html>
