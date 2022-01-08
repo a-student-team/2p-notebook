@@ -288,11 +288,12 @@ class NoBorderFrame(wx.Frame):
 
         elif event.LeftUp():
             self.ReleaseMouse()
-
+        #move like windows title bar
         elif event.Dragging():
             if self.HasCapture():
                 pos = event.GetPosition()
-                self.Move(self.GetPosition() + pos)
+
+                self.Move(self.GetPosition() + event.GetPosition())
                 self.pos = pos
         '''if event.LeftDown():
             self.CaptureMouse()
@@ -335,7 +336,7 @@ class FastNote (NoBorderFrame):  # 便签
 
 class MyApp(wx.App):
     def OnInit(self):
-        MyFrame1(None).Show()
+        FastNote(None).Show()
 
         return True
 

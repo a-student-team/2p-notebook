@@ -41,7 +41,7 @@ class MainFrame(MyFrame1):
         MyFrame1.__init__(self, parent)
         self.root = self.note_list.AddRoot("所有笔记")
         self.books = {}  # dict of book name
-        self.note_list.ExpandAll()  # ?
+        self.note_list.ExpandAll()  
         
         # the data like {'book':{'note':'content',...},...}
         self.note_data = {}
@@ -57,7 +57,17 @@ class MainFrame(MyFrame1):
             for note in self.note_data[book]:
                 self.note_list.AppendItem(book_item, note)
         self.note_list.ExpandAll()
-
+    def _note_in_note_data(self, note):
+        # check if note in note_data
+        for book in self.note_data:
+            if note in self.note_data[book]:
+                return True
+        return False
+    def _book_in_note_data(self, book):
+        # check if book in note_data
+        if book in self.note_data:
+            return True
+        return False
         
 
     def _updata_note_data(self):
@@ -88,19 +98,47 @@ class MainFrame(MyFrame1):
             for file in importlist:
                 if file.endswith('.note'):
                     with open(os.path.dirname(os.path.abspath(__file__)) + '\\data\\' + file, 'r', encoding="utf-8") as f:
+                        
                         try:
                             self.note_data.update(eval(f.read()))
                         except:
                             pass
+
             return True
         # read note_data from local file
         with open(file_path, 'r', encoding="utf-8") as f:
+            
+            
             try:
-                self.note_data = eval(f.read())
+                note_data_temp = eval(f.read())
+                
+                if self._dic_in_note_data(note_data_temp):
+                    #notice user to choose yes or no
+                    
+                    dialog = wx.MessageDialog(
+                self, '发现有重名的文件, 将会合并(或删除), 是否继续导入?', '提示', wx.OK | wx.ICON_INFORMATION)
+                    
+                    if dialog.ShowModal() == wx.ID_NO:
+                        dialog.Destroy()
+                        return None
+
+
+                    dialog.Destroy()
+                #add note_data_temp to self.note_data
+                self.note_data.update(note_data_temp)
                 return True
             except:
+                
                 return False
+    def _dic_in_note_data(self, dic):
+        # if dic in note_data, return True, else False
+        for i in dic:
+            if i in self.note_data:
 
+                return True
+            print(i)
+        
+        return False
     def new_paper(self, event):
         # get selected item and append new item in it
         root = self.note_list.GetSelection()
@@ -126,6 +164,14 @@ class MainFrame(MyFrame1):
         if name == '':
             return None
 
+        if self._note_in_note_data(name):
+            dialog = wx.MessageDialog(
+                self, '名字重复啦, 笔记已存在', '提示', wx.OK | wx.ICON_INFORMATION)
+            dialog.ShowModal()
+            dialog.Destroy()
+            return None
+        print(self.note_data[self.note_list.GetItemText(root)])
+
         self.note_list.AppendItem(root, name)
 
         self.note_list.Expand(root)
@@ -140,6 +186,12 @@ class MainFrame(MyFrame1):
         
 
         if name == '':
+            return None
+        if self._book_in_note_data(name):
+            dialog = wx.MessageDialog(
+                self, '名字重复啦, 笔记本已存在', '提示', wx.OK | wx.ICON_INFORMATION)
+            dialog.ShowModal()
+            dialog.Destroy()
             return None
         
         book = self.note_list.AppendItem(self.root, name)
@@ -212,7 +264,8 @@ class MainFrame(MyFrame1):
         # open xxx.note in local file, use file dialog
         dlg = wx.FileDialog(self, "选择文件", os.getcwd(), "", "*.note", wx.FD_OPEN)
         if dlg.ShowModal() == wx.ID_OK:
-            if self.get_note_data_in_file(str(dlg.GetPath())) == False:
+            get = self.get_note_data_in_file(str(dlg.GetPath()))
+            if get == False:
                 #show a dialog to user
                 print(dlg.GetPath())
                 dialog = wx.MessageDialog(
@@ -220,6 +273,9 @@ class MainFrame(MyFrame1):
                 dialog.ShowModal()
                 dialog.Destroy()
                 return None
+            elif get == None:
+                return None
+            
             self.note_list.DeleteAllItems()
             self.note_list.AddRoot("所有笔记")
             for book in self.note_data:
@@ -261,20 +317,16 @@ class MainFrame(MyFrame1):
         else:
             edit_browser = EditFrame(self, title="编辑笔记", size=(
                 800, 600), paper_title=self.note_list.GetItemText(root))
-            edit_browser.browser.LoadURL(get_file('\\html\\edit.html'))
+            
+            text = self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)]
+            edit_browser.browser.LoadURL(get_file('\\html\\edit.html?text={}'.format(text)))
             edit_browser.Show()
             edit_browser.Bind(wx.EVT_CLOSE, lambda event: self.edit_browser_close(event, root))
             # when it open, give a value to edit_browser.browser
             edit_browser.Bind(html2.EVT_WEBVIEW_LOADED, lambda event: self.edit_browser_open(event, root))
             
     def edit_browser_open(self, event, root=None):
-        # when edit_browser open, use the html2.runScript to give the value to he
-
-        if root == None:
-            return None
-        edit_browser = event.GetEventObject()
-        edit_browser.RunScript(
-            "setText('"+self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)]+"')")
+        pass
         
 
     def edit_browser_close(self, event, root=None):

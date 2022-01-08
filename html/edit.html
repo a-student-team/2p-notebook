@@ -17,7 +17,17 @@
     <script src="HandyEditor.min.js"></script>
     <script src="jquery-3.6.0.min.js"></script>
     <script type="text/javascript">
+
       var he = HE.getEditor('editor');
+      
+      function getQueryString(name) {  
+        //正则表达式，获取地址中的参数
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");  
+        var r = window.location.search.substr(1).match(reg);  
+ 
+        if (r != null) return unescape(r[2]); return null; 
+ 
+      }
       function getHtml(){
         return he.getHtml();
 
@@ -31,6 +41,10 @@
       function setText(html){
         return he.set(html);
       }
+
+      var text = getQueryString("text")
+      var DefaultText = decodeURI(text)
+      setText(text)
       
       
       
