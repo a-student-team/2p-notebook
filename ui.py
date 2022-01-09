@@ -21,51 +21,75 @@ def get_file(file_name):
     :return: file path
     '''
     return os.path.dirname(os.path.abspath(__file__)) + file_name
+
+
 ###########################################################################
 # Class MyFrame1
 ###########################################################################
 
 
-class MyFrame1 (wx.Frame):
+class MyFrame1(wx.Frame):
 
     def __init__(self, parent):
-        wx.Frame.__init__(self, parent, id=wx.ID_ANY, title=u"NoteBook", pos=wx.DefaultPosition, size=wx.Size(
-            1000, 700), style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+        wx.Frame.__init__(self,
+                          parent,
+                          id=wx.ID_ANY,
+                          title=u"NoteBook",
+                          pos=wx.DefaultPosition,
+                          size=wx.Size(1000, 700),
+                          style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
-        self.SetFont(wx.Font(wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT,
-                     wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+        self.SetFont(
+            wx.Font(wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT,
+                    wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False,
+                    "Microsoft YaHei UI"))
         self.SetMinSize(wx.Size(600, 400))
 
         menubar = wx.MenuBar(0)
         fileMenu = wx.Menu()
         newMenu = wx.Menu()
-        newMenu.Append(
-            wx.ID_NEW, u"新建笔记", wx.EmptyString, wx.ITEM_NORMAL)
-        newMenu.Append(
-            wx.ID_FILE, u"新建笔记本", wx.EmptyString, wx.ITEM_NORMAL)
+        self.nearlyfileMenu = wx.Menu()
+        newMenu.Append(wx.ID_NEW, u"新建笔记", wx.EmptyString, wx.ITEM_NORMAL)
+        newMenu.Append(wx.ID_FILE, u"新建笔记本", wx.EmptyString, wx.ITEM_NORMAL)
         fileMenu.Append(wx.ID_ANY, u"新建", newMenu)
         fileMenu.AppendSeparator()
-        fileMenu.Append(
-            wx.ID_OPEN, u"打开", wx.EmptyString, wx.ITEM_NORMAL)
+        fileMenu.Append(wx.ID_OPEN, u"打开", wx.EmptyString, wx.ITEM_NORMAL)
+        #nearly open
+
+        self.file1 = wx.MenuItem(self.nearlyfileMenu, wx.ID_FILE1, u" ",
+                                 wx.EmptyString, wx.ITEM_NORMAL)
+        self.file2 = wx.MenuItem(self.nearlyfileMenu, wx.ID_FILE2, u" ",
+                                 wx.EmptyString, wx.ITEM_NORMAL)
+        self.file3 = wx.MenuItem(self.nearlyfileMenu, wx.ID_FILE3, u" ",
+                                 wx.EmptyString, wx.ITEM_NORMAL)
+        self.file4 = wx.MenuItem(self.nearlyfileMenu, wx.ID_FILE4, u" ",
+                                 wx.EmptyString, wx.ITEM_NORMAL)
+        self.file5 = wx.MenuItem(self.nearlyfileMenu, wx.ID_FILE5, u" ",
+                                 wx.EmptyString, wx.ITEM_NORMAL)
+        self.nearlyfileMenu.Append(self.file1)
+        self.nearlyfileMenu.Append(self.file2)
+        self.nearlyfileMenu.Append(self.file3)
+        self.nearlyfileMenu.Append(self.file4)
+        self.nearlyfileMenu.Append(self.file5)
+
+        fileMenu.Append(wx.ID_ANY, u"最近打开", self.nearlyfileMenu)
+
         fileMenu.AppendSeparator()
-        fileMenu.Append(
-            wx.ID_SAVE, u"保存", wx.EmptyString, wx.ITEM_NORMAL)
-        fileMenu.Append(
-            wx.ID_SAVEAS, u"另存为", wx.EmptyString, wx.ITEM_NORMAL)
+        fileMenu.Append(wx.ID_SAVE, u"保存", wx.EmptyString, wx.ITEM_NORMAL)
+        fileMenu.Append(wx.ID_SAVEAS, u"另存为", wx.EmptyString, wx.ITEM_NORMAL)
         fileMenu.AppendSeparator()
-        fileMenu.Append(
-            wx.ID_EXIT, u"退出", wx.EmptyString, wx.ITEM_NORMAL)
+        fileMenu.Append(wx.ID_EXIT, u"退出", wx.EmptyString, wx.ITEM_NORMAL)
         menubar.Append(fileMenu, u"文件")
-        
+
         self.SetMenuBar(menubar)
 
         gbSizer1 = wx.GridBagSizer(0, 0)
         gbSizer1.SetFlexibleDirection(wx.BOTH)
         gbSizer1.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
 
-        self.m_panel10 = wx.Panel(
-            self, wx.ID_ANY, wx.DefaultPosition, wx.Size(150, 700), wx.TAB_TRAVERSAL)
+        self.m_panel10 = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition,
+                                  wx.Size(150, 700), wx.TAB_TRAVERSAL)
         self.m_panel10.SetBackgroundColour(
             wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWFRAME))
         self.m_panel10.SetMinSize(wx.Size(200, 500))
@@ -73,34 +97,40 @@ class MyFrame1 (wx.Frame):
         bSizer5 = wx.BoxSizer(wx.VERTICAL)
 
         bSizer5.SetMinSize(wx.Size(200, 500))
-        self.m_staticText9 = wx.StaticText(
-            self.m_panel10, wx.ID_ANY, u"我的笔记", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_staticText9 = wx.StaticText(self.m_panel10, wx.ID_ANY, u"我的笔记",
+                                           wx.DefaultPosition, wx.DefaultSize,
+                                           0)
         self.m_staticText9.Wrap(-1)
 
-        self.m_staticText9.SetFont(wx.Font(
-            24, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+        self.m_staticText9.SetFont(
+            wx.Font(24, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
         self.m_staticText9.SetForegroundColour(wx.Colour(247, 247, 247))
 
-        bSizer5.Add(self.m_staticText9, 0, wx.ALL |
-                    wx.ALIGN_CENTER_HORIZONTAL, 5)
+        bSizer5.Add(self.m_staticText9, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL,
+                    5)
 
-        self.note_list = wx.TreeCtrl(self.m_panel10, wx.ID_ANY, wx.DefaultPosition, wx.Size(150, 700), wx.TR_FULL_ROW_HIGHLIGHT |
-                                     wx.TR_HAS_BUTTONS | wx.TR_HIDE_ROOT | wx.TR_NO_LINES | wx.BORDER_NONE | wx.WANTS_CHARS | wx.TR_SINGLE | wx.EXPAND | wx.HSCROLL)
+        self.note_list = wx.TreeCtrl(
+            self.m_panel10, wx.ID_ANY, wx.DefaultPosition, wx.Size(150, 700),
+            wx.TR_FULL_ROW_HIGHLIGHT | wx.TR_HAS_BUTTONS | wx.TR_HIDE_ROOT
+            | wx.TR_NO_LINES | wx.BORDER_NONE | wx.WANTS_CHARS | wx.TR_SINGLE
+            | wx.EXPAND | wx.HSCROLL)
         self.note_list.SetForegroundColour(wx.Colour(247, 247, 247))
         self.note_list.SetBackgroundColour(
             wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWFRAME))
-        self.note_list.SetFont(wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
-                               wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+        self.note_list.SetFont(
+            wx.Font(13, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
 
         bSizer5.Add(self.note_list, 0, wx.ALL, 5)
 
         self.m_panel10.SetSizer(bSizer5)
         self.m_panel10.Layout()
-        gbSizer1.Add(self.m_panel10, wx.GBPosition(0, 0),
-                     wx.GBSpan(1, 1), wx.EXPAND | wx.ALL, 0)
+        gbSizer1.Add(self.m_panel10, wx.GBPosition(0, 0), wx.GBSpan(1, 1),
+                     wx.EXPAND | wx.ALL, 0)
 
-        self.m_panel26 = wx.Panel(
-            self, wx.ID_ANY, wx.DefaultPosition, wx.Size(700, 700), wx.TAB_TRAVERSAL)
+        self.m_panel26 = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition,
+                                  wx.Size(700, 700), wx.TAB_TRAVERSAL)
         self.m_panel26.SetBackgroundColour(
             wx.SystemSettings.GetColour(wx.SYS_COLOUR_APPWORKSPACE))
 
@@ -108,59 +138,71 @@ class MyFrame1 (wx.Frame):
         gbSizer2.SetFlexibleDirection(wx.BOTH)
         gbSizer2.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
 
-        self.morning_night = wx.StaticText(
-            self.m_panel26, wx.ID_ANY, u"早上好", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.morning_night = wx.StaticText(self.m_panel26, wx.ID_ANY, u"早上好",
+                                           wx.DefaultPosition, wx.DefaultSize,
+                                           0)
         self.morning_night.Wrap(-1)
 
-        self.morning_night.SetFont(wx.Font(
-            75, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+        self.morning_night.SetFont(
+            wx.Font(75, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
         self.morning_night.SetForegroundColour(wx.Colour(BLACK))
 
-        gbSizer2.Add(self.morning_night, wx.GBPosition(
-            0, 0), wx.GBSpan(1, 2), wx.ALL, 10)
+        gbSizer2.Add(self.morning_night, wx.GBPosition(0, 0), wx.GBSpan(1, 2),
+                     wx.ALL, 10)
 
-        self.time_text = wx.StaticText(
-            self.m_panel26, wx.ID_ANY, u"time", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.time_text = wx.StaticText(self.m_panel26, wx.ID_ANY, u"time",
+                                       wx.DefaultPosition, wx.DefaultSize, 0)
         self.time_text.Wrap(-1)
 
-        self.time_text.SetFont(wx.Font(15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
-                               wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+        self.time_text.SetFont(
+            wx.Font(15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
         self.time_text.SetForegroundColour(wx.Colour(BLACK))
 
-        gbSizer2.Add(self.time_text, wx.GBPosition(0, 2),
-                     wx.GBSpan(1, 1), wx.ALL | wx.ALIGN_BOTTOM, 5)
+        gbSizer2.Add(self.time_text, wx.GBPosition(0, 2), wx.GBSpan(1, 1),
+                     wx.ALL | wx.ALIGN_BOTTOM, 5)
 
-        self.m_button1 = wx.Button(self.m_panel26, wx.ID_ANY, u"添加新的笔记", wx.DefaultPosition,
-                                   wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_NONE | wx.BORDER_SIMPLE | wx.BORDER_THEME)
+        self.m_button1 = wx.Button(
+            self.m_panel26, wx.ID_ANY, u"添加新的笔记", wx.DefaultPosition,
+            wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_NONE | wx.BORDER_SIMPLE
+            | wx.BORDER_THEME)
 
         self.m_button1.SetBitmapFocus(wx.NullBitmap)
-        self.m_button1.SetFont(wx.Font(15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
-                               wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+        self.m_button1.SetFont(
+            wx.Font(15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
 
-        gbSizer2.Add(self.m_button1, wx.GBPosition(1, 0),
-                     wx.GBSpan(1, 1), wx.TOP | wx.RIGHT | wx.LEFT, 15)
+        gbSizer2.Add(self.m_button1, wx.GBPosition(1, 0), wx.GBSpan(1, 1),
+                     wx.TOP | wx.RIGHT | wx.LEFT, 15)
 
-        self.m_button11 = wx.Button(self.m_panel26, wx.ID_ANY, u"添加新的笔记本", wx.DefaultPosition,
-                                    wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_NONE | wx.BORDER_SIMPLE | wx.BORDER_THEME)
-        self.m_button11.SetFont(wx.Font(
-            15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+        self.m_button11 = wx.Button(
+            self.m_panel26, wx.ID_ANY, u"添加新的笔记本", wx.DefaultPosition,
+            wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_NONE | wx.BORDER_SIMPLE
+            | wx.BORDER_THEME)
+        self.m_button11.SetFont(
+            wx.Font(15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
 
-        gbSizer2.Add(self.m_button11, wx.GBPosition(2, 0),
-                     wx.GBSpan(1, 1), wx.TOP | wx.RIGHT | wx.LEFT, 15)
+        gbSizer2.Add(self.m_button11, wx.GBPosition(2, 0), wx.GBSpan(1, 1),
+                     wx.TOP | wx.RIGHT | wx.LEFT, 15)
 
-        self.m_button111 = wx.Button(self.m_panel26, wx.ID_ANY, u"添加新的便签", wx.DefaultPosition,
-                                     wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_NONE | wx.BORDER_SIMPLE | wx.BORDER_THEME)
-        self.m_button111.SetFont(wx.Font(
-            15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+        self.m_button111 = wx.Button(
+            self.m_panel26, wx.ID_ANY, u"添加新的便签", wx.DefaultPosition,
+            wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_NONE | wx.BORDER_SIMPLE
+            | wx.BORDER_THEME)
+        self.m_button111.SetFont(
+            wx.Font(15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
 
-        gbSizer2.Add(self.m_button111, wx.GBPosition(
-            3, 0), wx.GBSpan(1, 1), wx.ALL, 15)
+        gbSizer2.Add(self.m_button111, wx.GBPosition(3, 0), wx.GBSpan(1, 1),
+                     wx.ALL, 15)
 
         self.m_panel26.SetSizer(gbSizer2)
 
         self.m_panel26.Layout()
-        gbSizer1.Add(self.m_panel26, wx.GBPosition(0, 1),
-                     wx.GBSpan(1, 1), wx.EXPAND | wx.ALL, 0)
+        gbSizer1.Add(self.m_panel26, wx.GBPosition(0, 1), wx.GBSpan(1, 1),
+                     wx.EXPAND | wx.ALL, 0)
 
         self.SetSizer(gbSizer1)
         self.Layout()
@@ -227,12 +269,24 @@ class MyFrame1 (wx.Frame):
 
 class EditFrame1(wx.Frame):
     # edit note frame
-    def __init__(self, parent, id=wx.ID_ANY, title=wx.EmptyString, size=wx.DefaultSize, pos=wx.DefaultPosition,):
+    def __init__(
+        self,
+        parent,
+        id=wx.ID_ANY,
+        title=wx.EmptyString,
+        size=wx.DefaultSize,
+        pos=wx.DefaultPosition,
+    ):
         # import ./hmtl/edit.html and show
         # use html2
-        
-        wx.Frame.__init__(self, parent, id=id, title=title, size=size,
-                          pos=pos, style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+
+        wx.Frame.__init__(self,
+                          parent,
+                          id=id,
+                          title=title,
+                          size=size,
+                          pos=pos,
+                          style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.browser = html2.WebView.New(self)
         sizer.Add(self.browser, 1, wx.EXPAND, 0)
@@ -241,9 +295,22 @@ class EditFrame1(wx.Frame):
 
 class NoBorderFrame(wx.Frame):
     # a frame that has a sizer without borders
-    def __init__(self, parent, id=wx.ID_ANY, title=wx.EmptyString, pos=wx.DefaultPosition, size=wx.DefaultSize, style=wx.NO_BORDER, name=wx.FrameNameStr):
-        wx.Frame.__init__(self, parent, id=id, title=title,
-                          size=size, pos=pos, style=style, name=name)
+    def __init__(self,
+                 parent,
+                 id=wx.ID_ANY,
+                 title=wx.EmptyString,
+                 pos=wx.DefaultPosition,
+                 size=wx.DefaultSize,
+                 style=wx.NO_BORDER,
+                 name=wx.FrameNameStr):
+        wx.Frame.__init__(self,
+                          parent,
+                          id=id,
+                          title=title,
+                          size=size,
+                          pos=pos,
+                          style=style,
+                          name=name)
 
         self.Center()
         self.Show(True)
@@ -252,15 +319,21 @@ class NoBorderFrame(wx.Frame):
         self.sizer = wx.GridSizer(0, 0, 0, 0)
 
         # close button
-        self.close_bitmap = wx.Bitmap(
-            get_file('\\images\\close.png'), wx.BITMAP_TYPE_PNG)
+        self.close_bitmap = wx.Bitmap(get_file('\\images\\close.png'),
+                                      wx.BITMAP_TYPE_PNG)
 
-        self.close_button = wx.BitmapButton(self, wx.ID_ANY, self.close_bitmap, style=wx.BU_AUTODRAW | wx.BORDER_NONE | wx.BU_RIGHT, size=(
-            self.close_bitmap.GetWidth()+5, self.close_bitmap.GetHeight()+5))
+        self.close_button = wx.BitmapButton(
+            self,
+            wx.ID_ANY,
+            self.close_bitmap,
+            style=wx.BU_AUTODRAW | wx.BORDER_NONE | wx.BU_RIGHT,
+            size=(self.close_bitmap.GetWidth() + 5,
+                  self.close_bitmap.GetHeight() + 5))
         # set background color like frame
         self.close_button.SetBackgroundColour(self.GetBackgroundColour())
         self.close_button.SetBitmapFocus(
-            wx.Bitmap(get_file('\\images\\close_focus.png'), wx.BITMAP_TYPE_PNG))
+            wx.Bitmap(get_file('\\images\\close_focus.png'),
+                      wx.BITMAP_TYPE_PNG))
 
         self.sizer.Add(self.close_button, 0, wx.ALL | wx.ALIGN_RIGHT, 0)
         self.Layout()
@@ -307,18 +380,26 @@ class NoBorderFrame(wx.Frame):
         event.Skip()'''
 
 
-class FastNote (NoBorderFrame):  # 便签
+class FastNote(NoBorderFrame):  # 便签
 
     def __init__(self, parent):
-        NoBorderFrame.__init__(self, parent, id=wx.ID_ANY,
-                               pos=wx.DefaultPosition, size=wx.Size(200, 200))
+        NoBorderFrame.__init__(self,
+                               parent,
+                               id=wx.ID_ANY,
+                               pos=wx.DefaultPosition,
+                               size=wx.Size(200, 200))
 
     def print_screen(self):
 
-        self.m_textCtrl2 = wx.TextCtrl(
-            self, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, style=wx.TE_MULTILINE)
-        self.m_textCtrl2.SetFont(wx.Font(
-            18, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+        self.m_textCtrl2 = wx.TextCtrl(self,
+                                       wx.ID_ANY,
+                                       wx.EmptyString,
+                                       wx.DefaultPosition,
+                                       wx.DefaultSize,
+                                       style=wx.TE_MULTILINE)
+        self.m_textCtrl2.SetFont(
+            wx.Font(18, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
         self.m_textCtrl2.SetBackgroundColour(self.GetBackgroundColour())
         self.m_textCtrl2.SetForegroundColour(wx.Colour(0, 0, 0))
 
@@ -335,8 +416,9 @@ class FastNote (NoBorderFrame):  # 便签
 
 
 class MyApp(wx.App):
+
     def OnInit(self):
-        FastNote(None).Show()
+        MyFrame1(None).Show()
 
         return True
 
