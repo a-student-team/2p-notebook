@@ -1,0 +1,28 @@
+{
+    "kind": 1,
+
+    "default_font": {
+        "size": 18,
+        "family": "wx.FONTFAMILY_DEFAULT",
+        "style": "wx.FONTSTYLE_NORMAL",
+        "weight": "wx.FONTWEIGHT_NORMAL",
+        "underline": "false",
+        "face_name": "Microsoft YaHei UI",
+        "colour": "(247, 247, 247)"
+    },
+    "notebook_left": {
+        "colour": "wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWFRAME)"
+    },
+    "notebook_right": {
+        "colour": "(247, 247, 247)"
+    },
+    "morning_night_topic": {
+        "colour": "(0, 0, 0)",
+        "size": 75
+
+    },
+    "time_text": {
+        "colour": "(0, 0, 0)",
+        "size": 15
+    }
+}

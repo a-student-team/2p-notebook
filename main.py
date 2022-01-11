@@ -1,12 +1,13 @@
 import wx
 from wx import html2
 
-from ui import MyFrame1, EditFrame1, FastNote
+from ui import MyFrame1, EditFrame1, FastNote, SettingFrame
 
 import os
 import uuid
 import random
 import time
+import json
 
 
 def random_str(num=6):
@@ -44,9 +45,11 @@ class MainFrame(MyFrame1):
         self.note_list.ExpandAll()  
         self.file_path = [] # list of file_path, like{"path1", "path2", ...}
         self.nearlyfile = [self.file1, self.file2, self.file3, self.file4, self.file5]
-        
+        self._note_list_is_changed = False
+        self.edit_count = 0 #喵的我真的不会写了QAQ,如果把这个删了刚打开就会提示没保存
         # the data like {'book':{'note':'content',...},...}
         self.note_data = {}
+        
         
         #import data
         if self.get_note_data_in_file() == False:
@@ -65,6 +68,16 @@ class MainFrame(MyFrame1):
             for note in self.note_data[book]:
                 self.note_list.AppendItem(book_item, note)
         self.note_list.ExpandAll()
+        
+   
+
+    def note_list_is_changed(self, event=None):
+        if self.edit_count != 0:
+            self._note_list_is_changed = True
+            #set win topic a "*"
+            self.Title = "*" + self.Title if self.Title[0] != "*" else self.Title
+        self.edit_count += 1
+
     def _note_in_note_data(self, note):
         # check if note in note_data
         for book in self.note_data:
@@ -111,7 +124,7 @@ class MainFrame(MyFrame1):
             return False
             
             
-    def write_note_data_to_file(self, file_path=get_file('\\data\\main.note')):
+    def write_note_data_to_file(self, file_path=get_file('\\data\\note\\main.note')):
         #write note_data to local file
         '''
         param file_name: relative file path, like 'test.note'
@@ -123,18 +136,20 @@ class MainFrame(MyFrame1):
         with open(file_path, 'w', encoding="utf-8") as f:
             f.write(str(self.note_data))
     
-    def get_note_data_in_file(self, file_path=get_file('\\data\\main.note')):
+    def get_note_data_in_file(self, file_path=get_file('\\data\\note\\main.note')):
         
-        if file_path == get_file('\\data\\main.note'):
+        if file_path == get_file('\\data\\note\\main.note'):
+            print(file_path)
             # main.note file exist
             if not os.path.exists(file_path):
+                
                 return False
             # make a list about note local files,use os.listdir to get all files in the dir
-            importlist = os.listdir(os.path.dirname(os.path.abspath(__file__)) + '\\data')
+            importlist = os.listdir(os.path.dirname(os.path.abspath(__file__)) + '\\data\\note\\')
             #read note data from local files
             for file in importlist:
                 if file.endswith('.note'):
-                    with open(os.path.dirname(os.path.abspath(__file__)) + '\\data\\' + file, 'r', encoding="utf-8") as f:
+                    with open(os.path.dirname(os.path.abspath(__file__)) + '\\data\\note\\' + file, 'r', encoding="utf-8") as f:
                         
                         try:
                             self.note_data.update(eval(f.read()))
@@ -215,6 +230,7 @@ class MainFrame(MyFrame1):
         self.note_list.ExpandAll()
 
         self.note_data[self.note_list.GetItemText(root)][name] = '内容'
+        self.note_list_is_changed()
 
 
     def new_book(self, event):
@@ -237,6 +253,7 @@ class MainFrame(MyFrame1):
         self.books[name] = book
         self.note_data[name] = {}
         print(self.books, self.note_list)
+        self.note_list_is_changed()
 
     def new_note(self, event):
         FastNote(self).Show()
@@ -283,6 +300,14 @@ class MainFrame(MyFrame1):
             self.get_note_data_in_file(self.file4.GetLabelText())
         elif id == wx.ID_FILE5:
             self.get_note_data_in_file(self.file5.GetLabelText())
+        elif id == self.ID_THEME_DEFAULT:
+            self.set_theme(get_file("\\data\\theme\\default.theme.json"))
+        elif id == self.ID_THEME_DARK:
+            self.set_theme(get_file("\\data\\theme\\dark.theme.json"))
+        elif id == self.ID_THEME_LIGHT:
+            self.set_theme(get_file("\\data\\theme\\light.theme.json"))
+        elif id == self.ID_THEME_OTHER:
+            self.edit_theme()
         else:
             event.Skip()
     def save_as(self, event):
@@ -304,13 +329,13 @@ class MainFrame(MyFrame1):
         if file_path not in self.file_path:
             self.file_path.append(file_path)
         self._update_nearlyfileMenu()
+        self._note_list_is_changed = False
             
         dialog.Destroy()
     def save(self, event):
         self.write_note_data_to_file()
-        dialog = wx.MessageDialog(self, '保存成功', '提示', wx.OK | wx.ICON_INFORMATION)
-        dialog.ShowModal()
-        dialog.Destroy()
+        self._note_list_is_changed = False
+        self.Title = self.Title[1:]
 
     def open(self, event):
         # open xxx.note in local file, use file dialog
@@ -370,8 +395,9 @@ class MainFrame(MyFrame1):
         if self.note_list.GetItemParent(root) == self.root:
             return None
         else:
-            edit_browser = EditFrame(self, title="编辑笔记", size=(
-                800, 600), paper_title=self.note_list.GetItemText(root))
+            #全屏
+            edit_browser = EditFrame(self, title="编辑笔记", size=wx.Size(wx.GetDisplaySize())
+            , paper_title=self.note_list.GetItemText(root))
             
             text = self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)]
             edit_browser.browser.LoadURL(get_file('\\html\\edit.html?text={}'.format(text)))
@@ -387,6 +413,7 @@ class MainFrame(MyFrame1):
     def edit_browser_close(self, event, root=None):
         #ask user save or not
         # if save, use html2.runScript the function getText() to get text and save it into note_data
+        self.note_list_is_changed()
         if root == None:
             root = self.note_list.GetSelection()
         if self.note_list.GetItemParent(root) == self.root:
@@ -397,23 +424,99 @@ class MainFrame(MyFrame1):
             self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)] = text[1]
             edit_browser.Destroy()
             self.note_list.ExpandAll()
+        
     
     def on_close(self, event):
         # ask user save or not
         # if save, use funcion save()
+
         self.write_data_to_file()
-        dialog = wx.MessageDialog(
-            self, '是否保存笔记', '提示', wx.YES_NO | wx.ICON_INFORMATION)
-        if dialog.ShowModal() == wx.ID_YES:
-            self.save(None)
-        dialog.Destroy()
+        if self.Title[0] == '*':
+            dialog = wx.MessageDialog(
+                self, '是否保存笔记', '提示', wx.YES_NO | wx.ICON_INFORMATION)
+            if dialog.ShowModal() == wx.ID_YES:
+                self.save(None)
+            dialog.Destroy()
         self.Destroy()
+    def _get_theme_in_file(self, file_path=get_file('\\data\\theme\\default.theme.json')):
+        try:
+            with open(file_path, 'r') as f:
+                data = json.load(f)
+                print(data)
+                self.theme = data
+                return True
+        except:
+            return False
+
+    def _write_theme_to_file(self, file_path=get_file('\\data\\theme\\default.theme.json')):
+        try:
+            with open(file_path, 'w') as f:
+                f.write(str(self.theme))
+                return True
+        except:
+            return False
+
+    def set_theme(self, file_path):
+        # set theme
+        get = self._get_theme_in_file(file_path)
+        if get == False:
+            #notice user
+            dialog = wx.MessageDialog(
+                self, '主题文件导入失败', '提示', wx.OK | wx.ICON_INFORMATION)
+            dialog.ShowModal()
+            dialog.Destroy()
+            return False
+        try:
+            #刷新界面
+            self.m_panel26.SetBackgroundColour(
+            wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+            self.m_panel10.SetBackgroundColour(
+            (wx.Colour(eval(self.theme["notebook_left"]["colour"]))))
+
+
+            self.m_staticText9.SetFont(
+            wx.Font(
+                24, eval(self.theme["default_font"]["family"]),
+                eval(self.theme["default_font"]["style"]),
+                eval(self.theme["default_font"]["weight"]), False if
+                self.theme["default_font"]["underline"] == "false" else True,
+                self.theme["default_font"]["face_name"]))
+            self.m_staticText9.SetForegroundColour(
+            wx.Colour(eval(self.theme["default_font"]["colour"])))
+            self.note_list.SetForegroundColour(wx.Colour(eval(self.theme["default_font"]["colour"])))
+            self.note_list.SetBackgroundColour(
+                wx.Colour(eval(self.theme["notebook_left"]["colour"])))
+            self.note_list.SetFont(
+                wx.Font(13, eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+            self.morning_night.SetFont(
+            wx.Font(self.theme["morning_night_topic"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]), eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+            self.morning_night.SetForegroundColour(wx.Colour(eval(self.theme["morning_night_topic"]["colour"])))
+            self.time_text.SetFont(
+            wx.Font(self.theme["time_text"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]), eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+            self.time_text.SetForegroundColour(wx.Colour(eval(self.theme["time_text"]["colour"])))
+
+            self.Refresh()
+            self.Update()
+        except:
+            #notice user
+            dialog = wx.MessageDialog(
+                self, '主题文件加载失败', '提示', wx.OK | wx.ICON_INFORMATION)
+            dialog.ShowModal()
+            dialog.Destroy()
+            return False
+        return True
+    
+    def edit_theme(self, event=None):
+        app = SettingFrame(self)
+        app.Show()
+        app.open(1)
 
     def __del__(self):
         pass
 
+    
 class EditFrame(EditFrame1):
-    # function for edit note
+    # ui edit note
     def __init__(self, parent, id=wx.ID_ANY, title=wx.EmptyString, size=wx.DefaultSize, pos=wx.DefaultPosition, paper_title="title"):
         EditFrame1.__init__(self, parent, id, title, size, pos)
         self.paper_title = paper_title
