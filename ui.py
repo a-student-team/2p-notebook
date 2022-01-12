@@ -45,33 +45,32 @@ class MyFrame1(wx.Frame):
                           size=wx.Size(1000, 700),
                           style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
         self.theme = {
-    "kind": 1,
-
-    "default_font": {
-        "size": 18,
-        "family": "wx.FONTFAMILY_DEFAULT",
-        "style": "wx.FONTSTYLE_NORMAL",
-        "weight": "wx.FONTWEIGHT_NORMAL",
-        "underline": "false",
-        "face_name": "Microsoft YaHei UI",
-        "colour": "(247, 247, 247)"
-    },
-    "notebook_left": {
-        "colour": "wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWFRAME)"
-    },
-    "notebook_right": {
-        "colour": "(247, 247, 247)"
-    },
-    "morning_night_topic": {
-        "colour": "(0, 0, 0)",
-        "size": 75
-
-    },
-    "time_text": {
-        "colour": "(0, 0, 0)",
-        "size": 15
-    }
-}  # theme dict
+            "kind": 1,
+            "default_font": {
+                "size": 18,
+                "family": "wx.FONTFAMILY_DEFAULT",
+                "style": "wx.FONTSTYLE_NORMAL",
+                "weight": "wx.FONTWEIGHT_NORMAL",
+                "underline": "false",
+                "face_name": "Microsoft YaHei UI",
+                "colour": "(247, 247, 247)"
+            },
+            "notebook_left": {
+                "colour":
+                "wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWFRAME)"
+            },
+            "notebook_right": {
+                "colour": "(247, 247, 247)"
+            },
+            "morning_night_topic": {
+                "colour": "(0, 0, 0)",
+                "size": 75
+            },
+            "time_text": {
+                "colour": "(0, 0, 0)",
+                "size": 15
+            }
+        }  # theme dict
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
         self.SetFont(
             wx.Font(wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT,
@@ -92,7 +91,8 @@ class MyFrame1(wx.Frame):
         fileMenu.Append(wx.ID_OPEN, u"打开", wx.EmptyString, wx.ITEM_NORMAL)
         #tool menu
         thememenu = wx.Menu()
-        thememenu.Append(self.ID_THEME_DEFAULT, u"默认主题", wx.EmptyString, wx.ITEM_RADIO)
+        thememenu.Append(self.ID_THEME_DEFAULT, u"默认主题", wx.EmptyString,
+                         wx.ITEM_RADIO)
         thememenu.Append(self.ID_THEME_DARK, u"深色主题", wx.EmptyString,
                          wx.ITEM_RADIO)
         thememenu.Append(self.ID_THEME_LIGHT, u"浅色主题", wx.EmptyString,
@@ -168,11 +168,17 @@ class MyFrame1(wx.Frame):
                     5)
 
         self.note_list = NewNoteList(self.m_panel10)
-        self.note_list.SetForegroundColour(wx.Colour(eval(self.theme["default_font"]["colour"])))
+        self.note_list.SetForegroundColour(
+            wx.Colour(eval(self.theme["default_font"]["colour"])))
         self.note_list.SetBackgroundColour(
             wx.Colour(eval(self.theme["notebook_left"]["colour"])))
         self.note_list.SetFont(
-            wx.Font(13, eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+            wx.Font(
+                13, eval(self.theme["default_font"]["family"]),
+                eval(self.theme["default_font"]["style"]),
+                eval(self.theme["default_font"]["weight"]), False if
+                self.theme["default_font"]["underline"] == "false" else True,
+                self.theme["default_font"]["face_name"]))
 
         bSizer5.Add(self.note_list, 0, wx.ALL, 5)
 
@@ -185,8 +191,6 @@ class MyFrame1(wx.Frame):
                                   wx.Size(700, 700), wx.TAB_TRAVERSAL)
         self.m_panel26.SetBackgroundColour(
             wx.Colour(eval(self.theme["notebook_right"]["colour"])))
-        
-        
 
         gbSizer2 = wx.GridBagSizer(0, 0)
         gbSizer2.SetFlexibleDirection(wx.BOTH)
@@ -198,8 +202,15 @@ class MyFrame1(wx.Frame):
         self.morning_night.Wrap(-1)
 
         self.morning_night.SetFont(
-            wx.Font(self.theme["morning_night_topic"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]), eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
-        self.morning_night.SetForegroundColour(wx.Colour(eval(self.theme["morning_night_topic"]["colour"])))
+            wx.Font(
+                self.theme["morning_night_topic"]["size"],
+                eval(self.theme["default_font"]["family"]),
+                eval(self.theme["default_font"]["style"]),
+                eval(self.theme["default_font"]["weight"]), False if
+                self.theme["default_font"]["underline"] == "false" else True,
+                self.theme["default_font"]["face_name"]))
+        self.morning_night.SetForegroundColour(
+            wx.Colour(eval(self.theme["morning_night_topic"]["colour"])))
 
         gbSizer2.Add(self.morning_night, wx.GBPosition(0, 0), wx.GBSpan(1, 2),
                      wx.ALL, 10)
@@ -209,9 +220,15 @@ class MyFrame1(wx.Frame):
         self.time_text.Wrap(-1)
 
         self.time_text.SetFont(
-            wx.Font(self.theme["time_text"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]), eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
-        self.time_text.SetForegroundColour(wx.Colour(eval(self.theme["time_text"]["colour"])))
-
+            wx.Font(
+                self.theme["time_text"]["size"],
+                eval(self.theme["default_font"]["family"]),
+                eval(self.theme["default_font"]["style"]),
+                eval(self.theme["default_font"]["weight"]), False if
+                self.theme["default_font"]["underline"] == "false" else True,
+                self.theme["default_font"]["face_name"]))
+        self.time_text.SetForegroundColour(
+            wx.Colour(eval(self.theme["time_text"]["colour"])))
 
         gbSizer2.Add(self.time_text, wx.GBPosition(0, 2), wx.GBSpan(1, 1),
                      wx.ALL | wx.ALIGN_BOTTOM, 5)
@@ -469,39 +486,47 @@ class FastNote(NoBorderFrame):  # 便签
         self.SetSizer(self.main_sizer)
 
         self.Layout()
-        
-
-        
 
     def __del__(self):
         pass
 
-class SettingFrame ( wx.Frame ):
 
-    def __init__( self, parent ):
-        wx.Frame.__init__ ( self, parent, id = wx.ID_ANY, title = wx.EmptyString, pos = wx.DefaultPosition, size = wx.Size( 500,300 ), style = wx.DEFAULT_FRAME_STYLE|wx.TAB_TRAVERSAL )
+class SettingFrame(wx.Frame):
 
-        self.SetSizeHints( wx.DefaultSize, wx.DefaultSize )
+    def __init__(self, parent):
+        wx.Frame.__init__(self,
+                          parent,
+                          id=wx.ID_ANY,
+                          title=wx.EmptyString,
+                          pos=wx.DefaultPosition,
+                          size=wx.Size(500, 300),
+                          style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
 
-        bSizer1 = wx.BoxSizer( wx.VERTICAL )
+        self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
 
-        self.m_notebook1 = wx.Notebook( self, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, 0 )
-        self.basic = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-        self.m_notebook1.AddPage( self.basic, u"基础", False )
-        self.theme = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-        self.m_notebook1.AddPage( self.theme, u"外观", False )
-        self.file = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-        self.m_notebook1.AddPage( self.file, u"存储", False )
-        self.more = wx.Panel( self.m_notebook1, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
-        self.m_notebook1.AddPage( self.more, u"更多", False )
+        bSizer1 = wx.BoxSizer(wx.VERTICAL)
 
-        bSizer1.Add( self.m_notebook1, 1, wx.EXPAND |wx.ALL, 0 )
+        self.m_notebook1 = wx.Notebook(self, wx.ID_ANY, wx.DefaultPosition,
+                                       wx.DefaultSize, 0)
+        self.basic = wx.Panel(self.m_notebook1, wx.ID_ANY, wx.DefaultPosition,
+                              wx.DefaultSize, wx.TAB_TRAVERSAL)
+        self.m_notebook1.AddPage(self.basic, u"基础", False)
+        self.theme = wx.Panel(self.m_notebook1, wx.ID_ANY, wx.DefaultPosition,
+                              wx.DefaultSize, wx.TAB_TRAVERSAL)
+        self.m_notebook1.AddPage(self.theme, u"外观", False)
+        self.file = wx.Panel(self.m_notebook1, wx.ID_ANY, wx.DefaultPosition,
+                             wx.DefaultSize, wx.TAB_TRAVERSAL)
+        self.m_notebook1.AddPage(self.file, u"存储", False)
+        self.more = wx.Panel(self.m_notebook1, wx.ID_ANY, wx.DefaultPosition,
+                             wx.DefaultSize, wx.TAB_TRAVERSAL)
+        self.m_notebook1.AddPage(self.more, u"更多", False)
 
+        bSizer1.Add(self.m_notebook1, 1, wx.EXPAND | wx.ALL, 0)
 
-        self.SetSizer( bSizer1 )
+        self.SetSizer(bSizer1)
         self.Layout()
 
-        self.Centre( wx.BOTH )
+        self.Centre(wx.BOTH)
 
         self._init_basic_page()
         self._init_theme_page()
@@ -511,8 +536,11 @@ class SettingFrame ( wx.Frame ):
     def _init_basic_page(self):
         # basic page
         self.basic_sizer = wx.BoxSizer(wx.VERTICAL)
-        text = wx.StaticText(self.basic,wx.ID_ANY, u"基础设置不知道写啥的屑", wx.DefaultPosition, wx.DefaultSize, 0)
-        text.SetFont(wx.Font(18, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+        text = wx.StaticText(self.basic, wx.ID_ANY, u"基础设置不知道写啥的屑",
+                             wx.DefaultPosition, wx.DefaultSize, 0)
+        text.SetFont(
+            wx.Font(18, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
         self.basic_sizer.Add(text, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         self.basic.SetSizer(self.basic_sizer)
         self.basic.Layout()
@@ -520,8 +548,11 @@ class SettingFrame ( wx.Frame ):
     def _init_theme_page(self):
         # theme page
         self.theme_sizer = wx.BoxSizer(wx.VERTICAL)
-        text = wx.StaticText(self.theme,wx.ID_ANY, u"外观设置不知道写啥的屑", wx.DefaultPosition, wx.DefaultSize, 0)
-        text.SetFont(wx.Font(18, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+        text = wx.StaticText(self.theme, wx.ID_ANY, u"外观设置不知道写啥的屑",
+                             wx.DefaultPosition, wx.DefaultSize, 0)
+        text.SetFont(
+            wx.Font(18, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
         self.theme_sizer.Add(text, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         self.theme.SetSizer(self.theme_sizer)
         self.theme.Layout()
@@ -529,8 +560,11 @@ class SettingFrame ( wx.Frame ):
     def _init_file_page(self):
         # file page
         self.file_sizer = wx.BoxSizer(wx.VERTICAL)
-        text = wx.StaticText(self.file,wx.ID_ANY, u"存储设置不知道写啥的屑", wx.DefaultPosition, wx.DefaultSize, 0)
-        text.SetFont(wx.Font(18, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+        text = wx.StaticText(self.file, wx.ID_ANY, u"存储设置不知道写啥的屑",
+                             wx.DefaultPosition, wx.DefaultSize, 0)
+        text.SetFont(
+            wx.Font(18, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
         self.file_sizer.Add(text, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         self.file.SetSizer(self.file_sizer)
         self.file.Layout()
@@ -538,12 +572,15 @@ class SettingFrame ( wx.Frame ):
     def _init_more_page(self):
         # more page
         self.more_sizer = wx.BoxSizer(wx.VERTICAL)
-        text = wx.StaticText(self.more,wx.ID_ANY, u"没有更多", wx.DefaultPosition, wx.DefaultSize, 0)
-        text.SetFont(wx.Font(18, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+        text = wx.StaticText(self.more, wx.ID_ANY, u"没有更多", wx.DefaultPosition,
+                             wx.DefaultSize, 0)
+        text.SetFont(
+            wx.Font(18, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
         self.more_sizer.Add(text, 0, wx.ALL | wx.ALIGN_CENTER, 5)
         self.more.SetSizer(self.more_sizer)
         self.more.Layout()
-    
+
     def open(self, page):
         #open a page in notebook
         self.m_notebook1.SetSelection(page)
@@ -553,24 +590,22 @@ class NewNoteList(wx.TreeCtrl):
     '''
     重写树, 使其变得更加美观
     '''
+
     def __init__(self, parent):
-        super().__init__(parent, wx.ID_ANY, wx.DefaultPosition, wx.Size(150, 700),
+        super().__init__(
+            parent, wx.ID_ANY, wx.DefaultPosition, wx.Size(150, 700),
             wx.TR_FULL_ROW_HIGHLIGHT | wx.TR_HAS_BUTTONS | wx.TR_HIDE_ROOT
             | wx.TR_NO_LINES | wx.BORDER_NONE | wx.WANTS_CHARS | wx.TR_SINGLE
             | wx.EXPAND | wx.HSCROLL)
-        self.SetFont(wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
-        
+        self.SetFont(
+            wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+
         self.Bind(wx.EVT_PAINT, self.OnPaint)
-    
+
     def OnPaint(self, event):
         #Each second level item item has a box with all its children
         pass
-        
-        
-
-
-
-
 
 
 class MyApp(wx.App):
