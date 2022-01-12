@@ -11,6 +11,7 @@ body {
     -ms-user-select: none;
     -khtml-user-select: none;
     user-select: none;
+	
 
 
 }
@@ -26,31 +27,42 @@ body {
 	-webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.082);
 }
 .HandyEditor_menu{
+	/*边框*/
 	
-	padding: 0px 5px;
-	background-color: #f2f2f2;
+	background-color: #f7f7f750;
+	
+	flex-direction: row;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+	align-items: center;
+	
+	
 	
 }
 .HandyEditor_menu_item,.HandyEditor_menu_item:visited{
 	color: #fff;
-	background-color: #2981e4;
-	
-	box-shadow: 0 1px 3px rgba(0,0,0,0.6);
-	-moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.041);
-	-webkit-box-shadow: 0 rgba(0, 0, 0, 0.021);
-	text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.021);
-	border-bottom: 1px solid rgba(0, 0, 0, 0.041);
+	background-color: #bbbbbb;
+	border-radius: 3px;
 	padding: 5px 5px;
 	margin: 10px 5px;
+	/*动画*/
+	-webkit-transition: all 0.3s ease-in-out;
+	-moz-transition: all 0.3s ease-in-out;
+	-o-transition: all 0.3s ease-in-out;
+	transition: all 0.3s ease-in-out;
 }
 .HandyEditor_menu_item:hover{
-	background-color: #2575cf;
+	background-color: #343535;
+	/*变长*/
+	padding: 5px 20px;
+
 }
 .HandyEditor_menu_item:active{
-	background-color: #88b5e8;
+	background-color: #c5c8cc;
 }
 .HandyEditor_menu_item_valid{
 	background-color: #88b5e8;
+	
 }
 .HandyEditor_menu_item_invalid,
 .HandyEditor_menu_item_invalid:hover{
@@ -63,7 +75,8 @@ body {
 	
 	background-color: #fff;
 	line-height: 1.5em;
-	padding: 5px;
+	padding: 0px;
+	border: none;
 }
 
 input{
@@ -85,7 +98,7 @@ input{
     
     margin-top: 20px;
     width: 50px;
-    border-bottom: 3px solid #09e7e7;
+    border-bottom: 3px solid #313131;
     
 }
 

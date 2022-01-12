@@ -11,6 +11,7 @@ import wx
 from wx.core import BLACK
 import wx.xrc
 from wx import html2
+import wx.lib.agw.customtreectrl as treectrl
 
 import os
 
@@ -180,7 +181,7 @@ class MyFrame1(wx.Frame):
                 self.theme["default_font"]["underline"] == "false" else True,
                 self.theme["default_font"]["face_name"]))
 
-        bSizer5.Add(self.note_list, 0, wx.ALL, 5)
+        bSizer5.Add(self.note_list, 0, wx.ALL, 0)
 
         self.m_panel10.SetSizer(bSizer5)
         self.m_panel10.Layout()
@@ -586,26 +587,27 @@ class SettingFrame(wx.Frame):
         self.m_notebook1.SetSelection(page)
 
 
-class NewNoteList(wx.TreeCtrl):
+class NewNoteList(treectrl.CustomTreeCtrl):
     '''
     重写树, 使其变得更加美观
     '''
 
     def __init__(self, parent):
         super().__init__(
-            parent, wx.ID_ANY, wx.DefaultPosition, wx.Size(150, 700),
-            wx.TR_FULL_ROW_HIGHLIGHT | wx.TR_HAS_BUTTONS | wx.TR_HIDE_ROOT
-            | wx.TR_NO_LINES | wx.BORDER_NONE | wx.WANTS_CHARS | wx.TR_SINGLE
-            | wx.EXPAND | wx.HSCROLL)
-        self.SetFont(
-            wx.Font(12, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
-                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+            parent, wx.ID_ANY, wx.DefaultPosition, wx.Size(300, 700), agwStyle=treectrl.TR_HAS_BUTTONS|treectrl.TR_FULL_ROW_HIGHLIGHT|treectrl.TR_ELLIPSIZE_LONG_ITEMS|treectrl.TR_TOOLTIP_ON_LONG_ITEMS
+            |treectrl.TR_HAS_VARIABLE_ROW_HEIGHT)
+        panel_font = self.GetFont()
+        panel_font.SetPointSize(panel_font.GetPointSize() + 1)
+        self.SetFont(panel_font)
+        self.SetBackgroundColour(wx.Colour(255, 255, 255))
+        self.EnableSelectionGradient(False)
+        self.SetSpacing(20)
+        self.SetIndent(10)
+        
+        
 
-        self.Bind(wx.EVT_PAINT, self.OnPaint)
 
-    def OnPaint(self, event):
-        #Each second level item item has a box with all its children
-        pass
+        
 
 
 class MyApp(wx.App):

@@ -25,16 +25,6 @@ def get_file(file_name):
     '''
     return os.path.dirname(os.path.abspath(__file__)) + file_name
 
-class Paper(object):
-    def __init__(self, title="标题", content="内容"):
-        self.title = title
-        self.content = content
-        self.time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        self.uuid = random_str()
-
-    def __repr__(self):
-        return '<Paper title: %s, content: %s, time: %s, uuid: %s>' % (self.title, self.content, self.time, self.uuid)
-
 
 
 class MainFrame(MyFrame1):
@@ -70,20 +60,26 @@ class MainFrame(MyFrame1):
         self.note_list.ExpandAll()
         
    
+    def sort_note_list(self):
+        # sort note list
+        self.note_list.SortChildren(self.note_list.GetRootItem())
 
     def note_list_is_changed(self, event=None):
         if self.edit_count != 0:
             self._note_list_is_changed = True
             #set win topic a "*"
             self.Title = "*" + self.Title if self.Title[0] != "*" else self.Title
+            
         self.edit_count += 1
 
-    def _note_in_note_data(self, note):
+    def _note_in_note_data(self, note, root=None):
         # check if note in note_data
+        
         for book in self.note_data:
             if note in self.note_data[book]:
                 return True
         return False
+        
     def _book_in_note_data(self, book):
         # check if book in note_data
         if book in self.note_data:
@@ -153,6 +149,7 @@ class MainFrame(MyFrame1):
                         
                         try:
                             self.note_data.update(eval(f.read()))
+
                         except:
                             pass
 
@@ -199,9 +196,9 @@ class MainFrame(MyFrame1):
 
         try:
             # if root is paper, root = root.parent
-            if self.note_list.GetItemParent(root) != self.root:
+            if self.note_list.GetItemParent(root) != self.note_list.GetRootItem():
                 root = self.note_list.GetItemParent(root)
-
+            
             self.note_list.Expand(root)
             self.note_list.ExpandAll()
         except:
@@ -216,13 +213,13 @@ class MainFrame(MyFrame1):
         if name == '':
             return None
 
-        if self._note_in_note_data(name):
+        if self._note_in_note_data(name, self.note_list.GetItemText(root)):
             dialog = wx.MessageDialog(
                 self, '名字重复啦, 笔记已存在', '提示', wx.OK | wx.ICON_INFORMATION)
             dialog.ShowModal()
             dialog.Destroy()
             return None
-        print(self.note_data[self.note_list.GetItemText(root)])
+        #print(self.note_data[self.note_list.GetItemText(root)])
 
         self.note_list.AppendItem(root, name)
 
@@ -232,10 +229,13 @@ class MainFrame(MyFrame1):
         self.note_data[self.note_list.GetItemText(root)][name] = '内容'
         self.note_list_is_changed()
 
+        self.sort_note_list()
+
 
     def new_book(self, event):
 
         name = CreateDialog(self, "新笔记本").m_textCtrl1.GetValue()
+        
         
 
         if name == '':
@@ -247,14 +247,17 @@ class MainFrame(MyFrame1):
             dialog.Destroy()
             return None
         
-        book = self.note_list.AppendItem(self.root, name)
-        self.note_list.Expand(book)
+        book = self.note_list.AppendItem(self.note_list.GetRootItem(), name)
+        
+        self.note_list.Expand(self.note_list.GetRootItem())
         self.note_list.ExpandAll()
         self.books[name] = book
         self.note_data[name] = {}
         print(self.books, self.note_list)
-        self.note_list_is_changed()
+        self.sort_note_list()
+        
 
+        
     def new_note(self, event):
         FastNote(self).Show()
 
@@ -373,11 +376,33 @@ class MainFrame(MyFrame1):
         name = CreateDialog(self).m_textCtrl1.GetValue()
         if name == '':
             return None
+        try:
+            self.note_data[name] = self.note_data.pop(self.note_list.GetItemText(root))
+        except:
+            self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)] = self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))].pop(self.note_list.GetItemText(root))
+        print(self.note_data)
         self.note_list.SetItemText(root, name)
+        
+        self.note_list_is_changed()
 
     def delete_paper(self, event):
         root = self.note_list.GetSelection()
+        try:
+            self.note_data.pop(self.note_list.GetItemText(root))
+        except:
+            try:
+                self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))].pop(self.note_list.GetItemText(root))
+            except:
+                #notice user
+                dialog = wx.MessageDialog(
+                    self, '删除失败', '提示', wx.OK | wx.ICON_INFORMATION)
+                dialog.ShowModal()
+                dialog.Destroy()
+                return None
+        
         self.note_list.Delete(root)
+        
+        self.note_list_is_changed()
 
     def change_time(self, event):
         self.time_text.SetLabel(
@@ -392,7 +417,9 @@ class MainFrame(MyFrame1):
         # if item's parent is root , don't open it
 
         root = self.note_list.GetSelection()
-        if self.note_list.GetItemParent(root) == self.root:
+        if self.note_list.GetItemParent(root) == self.note_list.GetRootItem():
+            return None
+        if root == self.note_list.GetRootItem():
             return None
         else:
             #全屏
@@ -416,7 +443,7 @@ class MainFrame(MyFrame1):
         self.note_list_is_changed()
         if root == None:
             root = self.note_list.GetSelection()
-        if self.note_list.GetItemParent(root) == self.root:
+        if self.note_list.GetItemParent(root) == self.note_list.GetRootItem():
             return None
         else:
             edit_browser = event.GetEventObject()
