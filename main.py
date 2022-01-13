@@ -1,7 +1,7 @@
 import wx
 from wx import html2
 
-from ui import MyFrame1, NewNoteList
+from ui import MyFrame1
 from get_file import get_file
 from EditFrame import EditFrame
 from CreateDialog import CreateDialog
@@ -377,7 +377,10 @@ class MainFrame(MyFrame1):
         try:
             self.note_data[name] = self.note_data.pop(self.note_list.GetItemText(root))
         except:
-            self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)] = self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))].pop(self.note_list.GetItemText(root))
+            #rename self.note_data[parent][name]
+
+
+            self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][name] = self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))].pop(self.note_list.GetItemText(root))
         print(self.note_data)
         self.note_list.SetItemText(root, name)
         

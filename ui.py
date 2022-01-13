@@ -366,6 +366,8 @@ class NewNoteList(treectrl.CustomTreeCtrl):
         self.EnableSelectionGradient(False)
         self.SetSpacing(20)
         self.SetIndent(10)
+        self.SetImageList(wx.ImageList(16, 16))
+
         
         
 
