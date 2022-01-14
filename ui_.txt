@@ -1,0 +1,259 @@
+
+class NewNoteList(wx.TreeCtrl):
+    '''
+    重写树
+    '''
+
+    def __init__(self, parent=None):
+        super().__init__(
+            parent, wx.ID_ANY, wx.DefaultPosition, wx.Size(150, 700),
+            wx.TR_FULL_ROW_HIGHLIGHT | wx.TR_HAS_BUTTONS | wx.TR_HIDE_ROOT
+            | wx.TR_NO_LINES | wx.BORDER_NONE | wx.WANTS_CHARS | wx.TR_SINGLE
+            | wx.EXPAND | wx.HSCROLL)
+
+    def ergodic(self):
+        #遍历树
+        result = []
+        treeRoot = self.GetRootItem()
+        try:
+
+            def recursivelyGetTreeItem(tree, leval):
+                ''' 递归遍历TreeCtrl的所有孩子 '''
+                (item, cookie) = self.GetFirstChild(tree)
+                while item.IsOk():
+                    ItemStr = (item, self.GetItemText(item), leval)
+                    result.append(ItemStr)
+                    if self.GetChildrenCount(item) > 0:
+                        leval += 1
+                        recursivelyGetTreeItem(item, leval)
+                        leval -= 1
+                    (item, cookie) = self.GetNextChild(item, cookie)
+
+            leval = 0  #递归的子树层次
+            recursivelyGetTreeItem(treeRoot, leval)
+            return result
+        except:
+            return False
+
+    def ergodic_item(self, item):
+        #遍历某个树的所有孩子
+        try:
+            result = []
+            (item, cookie) = self.GetFirstChild(item)
+            while item.IsOk():
+                result.append((item, self.GetItemText(item)))
+                if self.GetChildrenCount(item) > 0:
+                    result.extend(self.ergodic_item(item))
+                (item, cookie) = self.GetNextChild(item, cookie)
+            return result
+        except:
+            return False
+
+class NoteListPanel(wx.Panel):
+    '''
+    通过note_list映射出frame显示到屏幕上
+    '''
+
+    def __init__(self, parent: any, note_list):
+        super().__init__(parent)
+        self.note_list = note_list
+        self.note_list_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(self.note_list_sizer)
+        self.note_list_ui = {}
+        self._init_ui()
+
+        self.SetSizer(self.note_list_sizer)
+        self.Layout()
+        self.Centre(wx.BOTH)
+
+        self.focused = 0 #当前选中的note
+        self.count = 0 #note的数量
+
+    def Refresh(
+        self,
+        eraseBackground=True,
+        rect=None,
+        colour={
+            "font": "(0, 0, 0)",
+            "background":
+            "wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWFRAME)"
+        }):
+
+        #refresh the ui and init the ui
+        self.note_list_sizer.Destroy()
+        self.note_list_sizer = wx.BoxSizer(wx.VERTICAL)
+        self.SetSizer(self.note_list_sizer)
+        self.count = 0
+        self.note_list_ui = {}
+        self._init_ui()
+        for i in self.note_list_ui.values():
+            if type(i) == wx.WrapSizer:
+                continue
+            print(i)
+            i.SetForegroundColour(wx.Colour(eval(colour["font"])))
+
+        for i in self.note_list_ui.values():
+            if type(i) == wx.WrapSizer:
+                continue
+            i.SetBackgroundColour(wx.Colour(eval(
+                colour["background"])))  #设置成跟背景一样的颜色
+        self.Layout()
+
+    def SetForegroundColour(self, colour):
+        super().SetForegroundColour(colour)
+        for i in self.note_list_ui.values():
+            print(i)
+            try:
+                i.SetForegroundColour(colour)
+            except:
+                continue
+        return True
+
+    def SetBackgroundColour(self, colour):
+        super().SetBackgroundColour(colour)
+        for i in self.note_list_ui.values():
+            try:
+                i.SetBackgroundColour(colour)
+            except:
+                continue
+        return True
+
+    def _init_ui(self):
+        #use note_list to print ui
+        try:
+            for i in self.note_list.ergodic():
+                print(i)
+                if i[2] == 1:
+                    continue
+                get = self._second_level_ui(i[1])
+                self.note_list_ui[i[1]] = get
+                self.note_list_sizer.Add(get, 0, wx.ALL | wx.ALIGN_LEFT, 0)
+                self.count += 1
+                for j in self.note_list.ergodic_item(i[0]):
+                    print(j)
+                    get = self._normal_item_ui(j[1], j[0])
+                    self.note_list_ui[j[1]] = get
+                    self.note_list_sizer.Add(get, 0, wx.LEFT | wx.ALIGN_LEFT,
+                                             25)
+                    self.count += 1
+            self.Layout()
+        except:
+            return False
+    
+    def _normal_item_ui(self, item_str, note_list_item=None):
+        m_panel = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition,
+                           wx.Size(150, 50), wx.TAB_TRAVERSAL)
+        m_panel.SetBackgroundColour(wx.Colour(239, 239, 239))
+
+        bSizer2 = wx.BoxSizer(wx.VERTICAL)
+
+        m_staticText2 = wx.StaticText(m_panel, wx.ID_ANY,
+                                     u"{}".format(item_str),
+                                     wx.DefaultPosition, wx.DefaultSize, 0)
+        m_staticText2.Wrap(-1)
+        m_staticText2.SetFont(
+            wx.Font(15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+
+        bSizer2.Add(m_staticText2, 0, wx.ALL, 0)
+
+        m_staticText = wx.StaticText(m_panel, wx.ID_ANY, u"内容",
+                                     wx.DefaultPosition, wx.DefaultSize, 0)
+        m_staticText.Wrap(-1)
+        m_staticText.SetFont(
+            wx.Font(10, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+        m_staticText.SetForegroundColour(wx.Colour(50, 51, 52))
+
+        bSizer2.Add(m_staticText, 0, wx.ALL, 0)
+
+        m_panel.SetSizer(bSizer2)
+        m_panel.Layout()
+        
+        
+
+        m_panel.Bind(wx.EVT_ENTER_WINDOW, lambda event:self.on_enter(event, m_panel))
+        
+        m_panel.Bind(wx.EVT_LEFT_DOWN, lambda event:self.on_click(event, m_panel, note_list_item))
+
+        m_panel.Bind(wx.EVT_LEAVE_WINDOW, lambda event:self.on_leave(event, m_panel))
+        
+
+
+        return m_panel
+
+    def _second_level_ui(self, topic):
+        wSizer1 = wx.WrapSizer(wx.HORIZONTAL, wx.WRAPSIZER_DEFAULT_FLAGS)
+
+        m_panel1 = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition,
+                            wx.Size(150, 50), wx.TAB_TRAVERSAL)
+        m_panel1.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWFRAME))
+
+        bSizer2 = wx.BoxSizer(wx.VERTICAL)
+
+        m_staticText2 = wx.StaticText(m_panel1, wx.ID_ANY, u"{}".format(topic),
+                                      wx.DefaultPosition, wx.DefaultSize, 0)
+        m_staticText2.Wrap(-1)
+        m_staticText2.SetFont(
+            wx.Font(20, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+
+        bSizer2.Add(m_staticText2, 0, wx.ALL, 3)
+
+        m_panel1.SetSizer(bSizer2)
+        m_panel1.Layout()
+        wSizer1.Add(m_panel1, 1, wx.EXPAND | wx.BOTTOM, 5)
+        m_panel1.Bind(wx.EVT_ENTER_WINDOW, lambda event:self.on_enter(event, m_panel1))
+        m_panel1.Bind(wx.EVT_LEAVE_WINDOW, lambda event:self.on_leave(event, m_panel1))
+
+        return wSizer1
+    def on_enter(self, event, panel):
+        #set the focus and background color, set other panel's background color to common color
+        panel.SetBackgroundColour(wx.Colour(255, 255, 255))
+        
+        panel.SetFocus()
+        self.focused = panel
+        print("enter")
+        panel.Refresh()
+        
+    def on_leave(self, event, panel):
+        
+        panel.SetBackgroundColour(wx.SystemSettings.GetColour(wx.SYS_COLOUR_WINDOWFRAME))
+        print("leave")
+        panel.Refresh()
+
+
+
+    def on_click(self, event, panel, note_list_item=None):
+        print("click")
+        app = MyFrame1(None)
+        app.open_note(event, panel)
+        print("click1")
+
+
+
+
+class MyApp(wx.App):
+
+    def OnInit(self):
+        '''#give me a wx.treectrl about test
+        tree = NewNoteList(wx.Frame(None))
+        tree.AddRoot("root")
+        tree.AppendItem(tree.GetRootItem(), "first")
+
+        tree.AppendItem(tree.GetRootItem(), "second")
+        tree.AppendItem(tree.GetRootItem(), "third")
+        tree.AppendItem(tree.GetRootItem(), "fourth")
+        #second level
+        tree.AppendItem(tree.GetFirstChild(tree.GetRootItem())[0], "first_first")
+        tree.AppendItem(tree.GetFirstChild(tree.GetRootItem())[0], "first_second")
+        tree.AppendItem(tree.GetFirstChild(tree.GetRootItem())[0], "first_third")
+        tree.AppendItem(tree.GetFirstChild(tree.GetRootItem())[0], "first_fourth")
+        NoteListPanel(None, tree).Show()
+
+        return True'''
+        app = wx.App()
+        frame = MyFrame1(None)
+        frame.Show()
+        app.MainLoop()
+        return True
