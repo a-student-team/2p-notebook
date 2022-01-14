@@ -15,7 +15,7 @@ python main.py
 ```
 
 ## 2p-notebook的使用方法
-[点击此处查看更多帮助](./html/help.html)
+[点击此处查看更多帮助](https://a-student-team.github.io/2p-notebook/html/help.html)
 右键左侧的笔记栏, 可以选择新建笔记或笔记本, 同时你也可以删除它们
 双击笔记打开编辑界面
 
