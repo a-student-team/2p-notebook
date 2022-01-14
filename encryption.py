@@ -1,24 +1,30 @@
 import base64
 
 def encrypt(message, key):
-    encrypted = []
-    for i in range(len(message)):
-        encrypted.append(chr(ord(message[i]) ^ ord(key[i % len(key)])))
-    return base64.b64encode(''.join(encrypted).encode())
+    try:
+        encrypted = []
+        for i in range(len(message)):
+            encrypted.append(chr(ord(message[i]) ^ ord(key[i % len(key)])))
+        return base64.b64encode(''.join(encrypted).encode())
+    except:
+        return False
     
 
 #use base64 to decode/encode
 def decrypt(message, key):
-    decrypted = []
-    message = base64.b64decode(message).decode()
-    for i in range(len(message)):
-        decrypted.append(chr(ord(message[i]) ^ ord(key[i % len(key)])))
-    return ''.join(decrypted)
+    try:
+        decrypted = []
+        message = base64.b64decode(message).decode()
+        for i in range(len(message)):
+            decrypted.append(chr(ord(message[i]) ^ ord(key[i % len(key)])))
+        return ''.join(decrypted)
+    except:
+        return False
 
 #test
 if __name__ == '__main__':
-    message = "Hello World!"
-    key = "Secret Key"
+    message = "False撒旦法"
+    key = "1234"
     encrypted = encrypt(message, key)
     decrypted = decrypt(encrypted, key)
     print(encrypted)

@@ -1,11 +1,11 @@
 import wx
 class CreateDialog (wx.Dialog):  # 名字输入框
 
-    def __init__(self, parent, value=""):
+    def __init__(self, parent, value="", encrypt=False):
         wx.Dialog.__init__(self, parent, id=wx.ID_ANY, title=wx.EmptyString,
-                           pos=wx.DefaultPosition, size=wx.Size(171, 129), style=wx.DEFAULT_DIALOG_STYLE)
+                           pos=wx.DefaultPosition, size=wx.Size(171, 170), style=wx.DEFAULT_DIALOG_STYLE)
 
-        self.SetSizeHints(wx.Size(100, 120), wx.DefaultSize)
+        self.SetSizeHints(wx.Size(100, 250), wx.DefaultSize)
 
         bSizer5 = wx.BoxSizer(wx.VERTICAL)
 
@@ -18,10 +18,22 @@ class CreateDialog (wx.Dialog):  # 名字输入框
         self.m_textCtrl1 = wx.TextCtrl(
             self, wx.ID_ANY, str(value), wx.DefaultPosition, wx.DefaultSize, 0)
         bSizer5.Add(self.m_textCtrl1, 0, wx.ALL, 5)
-
+        #让用户选择是否加密
+        self.m_checkBox1 = wx.CheckBox(
+            self, wx.ID_ANY, u"加密", wx.DefaultPosition, wx.DefaultSize, 0)
+        self.m_checkBox1.SetValue(True)
+        if encrypt == True:
+            
+            bSizer5.Add(self.m_checkBox1, 0, wx.ALL, 5)
+        else:
+            self.m_checkBox1.Hide()
+        #确定按钮
         self.m_button5 = wx.Button(
             self, wx.ID_ANY, u"确定", wx.DefaultPosition, wx.DefaultSize, 0)
         bSizer5.Add(self.m_button5, 0, wx.ALL | wx.ALIGN_RIGHT, 5)
+
+        
+
 
         self.SetSizer(bSizer5)
         self.Layout()
@@ -40,5 +52,5 @@ class CreateDialog (wx.Dialog):  # 名字输入框
         pass
 
     def close(self, event):
-        self.m_textCtrl1.SetValue("")
+        
         self.Destroy()

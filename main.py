@@ -7,6 +7,8 @@ from EditFrame import EditFrame
 from CreateDialog import CreateDialog
 from FastNote import FastNote
 from SettingFrame import SettingFrame
+from encryption import encrypt, decrypt
+from EncryptDialog import EncryptDialog
 import os
 import uuid
 import random
@@ -35,8 +37,10 @@ class MainFrame(MyFrame1):
         self.nearlyfile = [self.file1, self.file2, self.file3, self.file4, self.file5]
         self._note_list_is_changed = False
         self.edit_count = 0 #喵的我真的不会写了QAQ,如果把这个删了刚打开就会提示没保存
-        # the data like {'book':{'note':'content',...},...}
+        # the data like {'book':{'type':'1','note':'content',...},...}
         self.note_data = {}
+        self.key = {} #eg. {'note':'key',...}
+        
         
         
         #import data
@@ -51,10 +55,21 @@ class MainFrame(MyFrame1):
         
         self.note_list.DeleteAllItems()
         self.note_list.AddRoot("所有笔记")
+        
         for book in self.note_data:
-            book_item = self.note_list.AppendItem(self.note_list.GetRootItem(), book)
-            for note in self.note_data[book]:
-                self.note_list.AppendItem(book_item, note)
+            if book.find("NgsAABwEVA==")!= -1:
+                print(book)
+                book_item = self.note_list.AppendItem(self.note_list.GetRootItem(), book[12:]) 
+                
+            else:
+                print(book)
+                book_item = self.note_list.AppendItem(self.note_list.GetRootItem(), book)
+            for t, note in self.note_data[book].items():
+                print(t, note)
+                if t == "type":
+                    continue
+                self.note_list.AppendItem(book_item, t)
+            
         self.note_list.ExpandAll()
         
    
@@ -223,36 +238,54 @@ class MainFrame(MyFrame1):
 
         self.note_list.Expand(root)
         self.note_list.ExpandAll()
-
-        self.note_data[self.note_list.GetItemText(root)][name] = '内容'
+        
         self.note_list_is_changed()
 
         self.sort_note_list()
 
+        try:
+            self.note_data["NgsAABwEVA=="+self.note_list.GetItemText(root)][name] = '内容'
+        except:
+            self.note_data[self.note_list.GetItemText(root)][name] = '内容'
+
 
     def new_book(self, event):
 
-        name = CreateDialog(self, "新笔记本").m_textCtrl1.GetValue()
-        
-        
-
-        if name == '':
-            return None
-        if self._book_in_note_data(name):
+        dialog = CreateDialog(self, "新笔记本", True)
+        name = str(dialog.m_textCtrl1.GetValue())
+        if self._book_in_note_data(name) or self._book_in_note_data("NgsAABwEVA=="+name):
             dialog = wx.MessageDialog(
                 self, '名字重复啦, 笔记本已存在', '提示', wx.OK | wx.ICON_INFORMATION)
             dialog.ShowModal()
             dialog.Destroy()
             return None
-        
-        book = self.note_list.AppendItem(self.note_list.GetRootItem(), name)
-        
-        self.note_list.Expand(self.note_list.GetRootItem())
-        self.note_list.ExpandAll()
-        self.books[name] = book
-        self.note_data[name] = {}
+        if name == '':
+            return None
+        if dialog.m_checkBox1.GetValue():
+            
+            e_dialog = EncryptDialog(self)
+            e_dialog.ShowModal()
+            key = e_dialog.m_textCtrl1.GetValue()
+            book = self.note_list.AppendItem(self.note_list.GetRootItem(), name)
+            
+            self.note_list.Expand(self.note_list.GetRootItem())
+            self.note_list.ExpandAll()
+
+            self.key[self.note_list.GetItemText(self.note_list.GetSelection())]= key
+            self.note_data["NgsAABwEVA=="+name] = {"type":1}
+        else:
+
+            book = self.note_list.AppendItem(self.note_list.GetRootItem(), name)
+            
+            self.note_list.Expand(self.note_list.GetRootItem())
+            self.note_list.ExpandAll()
+            self.books[name] = book
+            self.note_data[name] = {"type":0}
+            
         print(self.books, self.note_list)
         self.sort_note_list()
+
+        self.note_list_is_changed()
         
 
         
@@ -331,6 +364,7 @@ class MainFrame(MyFrame1):
             self.file_path.append(file_path)
         self._update_nearlyfileMenu()
         self._note_list_is_changed = False
+        
             
         dialog.Destroy()
     def save(self, event):
@@ -378,9 +412,15 @@ class MainFrame(MyFrame1):
             self.note_data[name] = self.note_data.pop(self.note_list.GetItemText(root))
         except:
             #rename self.note_data[parent][name]
+            try:
+                self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][name] = self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))].pop(self.note_list.GetItemText(root))
+            except:
+                try:
+                    self.note_data["NgsAABwEVA=="+name] = self.note_data.pop("NgsAABwEVA=="+self.note_list.GetItemText(root))
+                except:
+                    #rename self.note_data[parent][name]
+                    self.note_data["NgsAABwEVA=="+self.note_list.GetItemText(self.note_list.GetItemParent(root))][name] = self.note_data["NgsAABwEVA=="+self.note_list.GetItemText(self.note_list.GetItemParent(root))].pop(self.note_list.GetItemText(root))
 
-
-            self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][name] = self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))].pop(self.note_list.GetItemText(root))
         print(self.note_data)
         self.note_list.SetItemText(root, name)
         
@@ -394,12 +434,19 @@ class MainFrame(MyFrame1):
             try:
                 self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))].pop(self.note_list.GetItemText(root))
             except:
-                #notice user
-                dialog = wx.MessageDialog(
-                    self, '删除失败', '提示', wx.OK | wx.ICON_INFORMATION)
-                dialog.ShowModal()
-                dialog.Destroy()
-                return None
+                try:
+                    self.note_data.pop("NgsAABwEVA=="+self.note_list.GetItemText(root))
+                except:
+                    try:
+                        self.note_data["NgsAABwEVA=="+self.note_list.GetItemText(self.note_list.GetItemParent(root))].pop(self.note_list.GetItemText(root))
+                    except:
+                        #notice user
+                        dialog = wx.MessageDialog(
+                            self, '删除失败', '提示', wx.OK | wx.ICON_INFORMATION)
+                        dialog.ShowModal()
+                        dialog.Destroy()
+                        
+                        return None
         
         self.note_list.Delete(root)
         
@@ -426,8 +473,20 @@ class MainFrame(MyFrame1):
             #全屏
             edit_browser = EditFrame(self, title="编辑笔记", size=wx.Size(wx.GetDisplaySize())
             , paper_title=self.note_list.GetItemText(root))
+            try:
+                text = self.note_data["NgsAABwEVA=="+self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)]
+                #如果加密, 则提醒用户输入密码解密
             
-            text = self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)]
+                dialog = EncryptDialog(self, '')
+                dialog.ShowModal()
+                self._key = str(dialog.m_textCtrl1.GetValue())
+                print(text)
+                if text != "":
+                    text = decrypt(text, self._key)
+                else:
+                    text = ""
+            except:
+                text = self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)]
             edit_browser.browser.LoadURL(get_file('\\html\\edit.html?text={}'.format(text)))
             edit_browser.Show()
             edit_browser.Bind(wx.EVT_CLOSE, lambda event: self.edit_browser_close(event, root))
@@ -449,7 +508,10 @@ class MainFrame(MyFrame1):
         else:
             edit_browser = event.GetEventObject()
             text = edit_browser.browser.RunScript("getText()")
-            self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)] = text[1]
+            try:
+                self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)] = text[1]
+            except:
+                self.note_data["NgsAABwEVA=="+self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)] = encrypt(text[1], self._key)
             edit_browser.Destroy()
             self.note_list.ExpandAll()
         
