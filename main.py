@@ -9,6 +9,7 @@ from FastNote import FastNote
 from SettingFrame import SettingFrame
 from encryption import encrypt, decrypt
 from EncryptDialog import EncryptDialog
+from HelpFrame import HelpFrame
 import os
 import uuid
 import random
@@ -342,8 +343,15 @@ class MainFrame(MyFrame1):
             self.set_theme(get_file("\\data\\theme\\light.theme.json"))
         elif id == self.ID_THEME_OTHER:
             self.edit_theme()
+        elif id == wx.ID_HELP:
+            self.help()
         else:
             event.Skip()
+
+    def help(self):
+        frame = HelpFrame(self)
+        frame.Show()
+
     def save_as(self, event):
         # use file dialog(only xxx.note) to get file name, and save data
         # if save successfully, show a dialog for user

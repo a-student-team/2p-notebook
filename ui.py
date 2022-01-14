@@ -131,6 +131,8 @@ class MyFrame1(wx.Frame):
         fileMenu.Append(wx.ID_SAVEAS, u"另存为", wx.EmptyString, wx.ITEM_NORMAL)
         fileMenu.AppendSeparator()
         fileMenu.Append(wx.ID_EXIT, u"退出", wx.EmptyString, wx.ITEM_NORMAL)
+
+        helpMenu.Append(wx.ID_HELP, u"帮助", wx.EmptyString, wx.ITEM_NORMAL)
         menubar.Append(fileMenu, u"文件")
         menubar.Append(toolMenu, u"工具")
         menubar.Append(helpMenu, u"关于")
