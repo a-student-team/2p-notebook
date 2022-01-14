@@ -5,7 +5,7 @@
 
 ## 安装
 
-[点击此处下载2p-notebook](url[main.py])
+[点击此处下载2p-notebook](https://github.com/a-student-team/2p-notebook/releases/)
 
 ## 如何在python中使用2p-notebook
 ```cmd 
