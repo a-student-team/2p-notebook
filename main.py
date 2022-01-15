@@ -466,6 +466,8 @@ class MainFrame(MyFrame1):
                         return None
         
         self.note_list.Delete(root)
+        self.edit_panel.Hide()
+        self.gbSizer2_panel.Show()
         
         self.note_list_is_changed()
 
