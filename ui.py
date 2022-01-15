@@ -249,6 +249,20 @@ class MyFrame1(wx.Frame):
         gbSizer2.Add(self.time_text, wx.GBPosition(0, 2), wx.GBSpan(1, 1),
                      wx.ALL | wx.ALIGN_BOTTOM, 5)
 
+        self.welcome = wx.StaticText(self.m_panel26, wx.ID_ANY, u"欢迎使用笔记本, 你可以....",
+                                wx.DefaultPosition, wx.DefaultSize, 0)
+        self.welcome.Wrap(-1)
+
+        self.welcome.SetFont(
+            wx.Font(self.theme["default_font"]["size"]+3, eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),wx.FONTWEIGHT_BOLD, False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"])
+        )
+        welcome_font_colour = eval(self.theme["default_font"]["colour"])
+        #颜色取反
+        welcome_font_colour = (255 - welcome_font_colour[0], 255 - welcome_font_colour[1], 255 - welcome_font_colour[2])
+        self.welcome.SetForegroundColour(
+            wx.Colour(welcome_font_colour))
+        gbSizer2.Add(self.welcome, wx.GBPosition(1, 0), wx.GBSpan(1, 1), wx.ALL, 5)
+
         self.m_button1 = wx.Button(self.m_panel26, wx.ID_ANY, u"添加新的笔记",)
         #无边框
         self.m_button1.SetWindowStyle(wx.BORDER_NONE)
@@ -267,12 +281,12 @@ class MyFrame1(wx.Frame):
         self.m_button1.SetBackgroundColour(
             wx.Colour(eval(self.theme["notebook_right"]["colour"])))
 
-        gbSizer2.Add(self.m_button1, wx.GBPosition(1, 0), wx.GBSpan(1, 1),
+        gbSizer2.Add(self.m_button1, wx.GBPosition(2, 0), wx.GBSpan(1, 1),
                      wx.TOP | wx.RIGHT | wx.LEFT, 15)
 
         self.m_button11 = wx.Button(
             self.m_panel26, wx.ID_ANY, u"添加新的笔记本", wx.DefaultPosition,
-            wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_NONE | wx.BORDER_SIMPLE
+            wx.DefaultSize,  wx.BORDER_NONE | wx.BORDER_SIMPLE
             | wx.BORDER_THEME)
         self.m_button11.SetFont(
             wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
@@ -286,27 +300,61 @@ class MyFrame1(wx.Frame):
         self.m_button11.SetBitmapMargins(0, 0)
         self.m_button11.SetBitmapPosition(wx.LEFT)
 
-        gbSizer2.Add(self.m_button11, wx.GBPosition(2, 0), wx.GBSpan(1, 1),
+        gbSizer2.Add(self.m_button11, wx.GBPosition(3, 0), wx.GBSpan(1, 1),
                      wx.TOP | wx.RIGHT | wx.LEFT, 15)
 
         self.m_button111 = wx.Button(
             self.m_panel26, wx.ID_ANY, u"添加新的便签", wx.DefaultPosition,
-            wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_NONE | wx.BORDER_SIMPLE
+            wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE
             | wx.BORDER_THEME)
+            
         self.m_button111.SetFont(
             wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
         self.m_button111.SetBackgroundColour(
             wx.Colour(eval(self.theme["notebook_right"]["colour"])))
         
 
-        gbSizer2.Add(self.m_button111, wx.GBPosition(3, 0), wx.GBSpan(1, 1),
+        gbSizer2.Add(self.m_button111, wx.GBPosition(4, 0), wx.GBSpan(1, 1),
                      wx.ALL, 15)
+        
+                        
+
+        self.help_text = wx.StaticText(self.m_panel26, wx.ID_ANY, u"或者你可以获取帮助",
+                                    wx.DefaultPosition, wx.DefaultSize, 0)
+        self.help_text.Wrap(-1)
+
+        self.help_text.SetFont(
+            wx.Font(self.theme["default_font"]["size"]+3, eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),wx.FONTWEIGHT_BOLD, False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"])
+        )
+        help_text_colour = eval(self.theme["default_font"]["colour"])
+        
+        #颜色取反
+        help_text_colour = (255 - help_text_colour[0], 255 - help_text_colour[1], 255 - help_text_colour[2])
+        self.help_text.SetForegroundColour(
+            wx.Colour(help_text_colour))
+        gbSizer2.Add(self.help_text, wx.GBPosition(5, 0), wx.GBSpan(1, 1),
+                        wx.ALL, 5)
+        self.help_button = wx.Button(self.m_panel26, wx.ID_ANY, u"帮助", wx.DefaultPosition,
+                                wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE
+                                | wx.BORDER_THEME)
+        self.help_button.SetFont(
+            wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+        self.help_button.SetBackgroundColour(
+            wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+        
+        gbSizer2.Add(self.help_button, wx.GBPosition(6, 0), wx.GBSpan(1, 1),
+                        wx.TOP | wx.RIGHT | wx.LEFT, 15)
 
         self.m_panel26.SetSizer(gbSizer2)
 
+        
+
         self.m_panel26.Layout()
+        
         gbSizer1.Add(self.m_panel26, wx.GBPosition(0, 1), wx.GBSpan(1, 1),
                      wx.EXPAND | wx.ALL, 0)
+        
+        
 
         self.SetSizer(gbSizer1)
         self.Layout()
@@ -316,7 +364,7 @@ class MyFrame1(wx.Frame):
         gbSizer1.AddGrowableRow(0)
         gbSizer1.AddGrowableCol(1)
 
-        gbSizer2.AddGrowableRow(3)
+        gbSizer2.AddGrowableRow(6)
         gbSizer2.AddGrowableCol(2)
 
         self.timer = wx.Timer(self)  # 创建定时器
@@ -328,6 +376,7 @@ class MyFrame1(wx.Frame):
         self.m_button1.Bind(wx.EVT_BUTTON, self.new_paper)
         self.m_button11.Bind(wx.EVT_BUTTON, self.new_book)
         self.m_button111.Bind(wx.EVT_BUTTON, self.new_note)
+        self.help_button.Bind(wx.EVT_BUTTON, self.help)
         self.note_list.Bind(wx.EVT_TREE_BEGIN_LABEL_EDIT, self.edit_note)
         self.note_list.Bind(wx.EVT_TREE_END_LABEL_EDIT, self.edit_note_end)
         self.m_panel10.Bind(wx.EVT_RIGHT_DOWN, self.show_menu)
@@ -340,10 +389,12 @@ class MyFrame1(wx.Frame):
         self.m_button1.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
         self.m_button11.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
         self.m_button111.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
+        self.help_button.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
 
         self.m_button1.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
         self.m_button11.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
         self.m_button111.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
+        self.help_button.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
 
     def __del__(self):
         pass
@@ -386,6 +437,9 @@ class MyFrame1(wx.Frame):
         event.Skip()
 
     def on_leave_window(self, event):
+        event.Skip()
+
+    def help(self, event=None):
         event.Skip()
 
 

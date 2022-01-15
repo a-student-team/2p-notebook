@@ -341,7 +341,7 @@ class MainFrame(MyFrame1):
         else:
             event.Skip()
 
-    def help(self):
+    def help(self, event=None):
         frame = HelpFrame(self)
         frame.Show()
 
