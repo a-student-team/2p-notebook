@@ -17,17 +17,6 @@ import time
 import json
 
 
-def random_str(num=6):
-    uln = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-    rs = random.sample(uln, num)  # 生成一个 指定位数的随机字符串
-    a = uuid.uuid1()  # 根据 时间戳生成 uuid , 保证全球唯一
-    b = ''.join(rs + str(a).split("-"))  # 生成将随机字符串 与 uuid拼接
-    return b  # 返回随机字符串
-
-
-
-
-
 class MainFrame(MyFrame1):
     def __init__(self, parent):
         MyFrame1.__init__(self, parent)
@@ -267,7 +256,11 @@ class MainFrame(MyFrame1):
             e_dialog = EncryptDialog(self)
             e_dialog.ShowModal()
             key = e_dialog.m_textCtrl1.GetValue()
-            book = self.note_list.AppendItem(self.note_list.GetRootItem(), name)
+            book = self.note_list.AppendItem(self.note_list.GetRootItem(), name, image=0)
+            book = self.note_list.FindItem(self.note_list.GetRootItem(), name)
+            #添加本地图标icon.ico
+            
+
             
             self.note_list.Expand(self.note_list.GetRootItem())
             self.note_list.ExpandAll()
@@ -585,16 +578,28 @@ class MainFrame(MyFrame1):
             self.note_list.SetBackgroundColour(
                 wx.Colour(eval(self.theme["notebook_left"]["colour"])))
             self.note_list.SetFont(
-                wx.Font(13, eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+                wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
             self.morning_night.SetFont(
             wx.Font(self.theme["morning_night_topic"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]), eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
             self.morning_night.SetForegroundColour(wx.Colour(eval(self.theme["morning_night_topic"]["colour"])))
             self.time_text.SetFont(
             wx.Font(self.theme["time_text"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]), eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
             self.time_text.SetForegroundColour(wx.Colour(eval(self.theme["time_text"]["colour"])))
+            self.m_button1.SetFont(
+                wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+            self.m_button11.SetFont(
+                wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+            self.m_button111.SetFont(
+                wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+            
+            self.on_enter_window(None)
+            self.on_leave_window(None)
+            
+            
 
             self.Refresh()
             self.Update()
+            self.Layout()
         except:
             #notice user
             dialog = wx.MessageDialog(
@@ -608,6 +613,61 @@ class MainFrame(MyFrame1):
         app = SettingFrame(self)
         app.Show()
         app.open(1)
+
+    def on_enter_window(self, event=None):
+        try:
+            #change button background color
+            event.GetEventObject().SetBackgroundColour(
+                wx.Colour(39, 44, 52))
+            event.GetEventObject().SetForegroundColour(
+                wx.Colour(255, 255, 255))
+        except:
+            self.m_button1.SetBackgroundColour(
+                wx.Colour(39, 44, 52))
+            self.m_button1.SetForegroundColour(
+                wx.Colour(255, 255, 255))
+
+            self.m_button11.SetBackgroundColour(
+                wx.Colour(39, 44, 52))
+            self.m_button11.SetForegroundColour(
+                wx.Colour(255, 255, 255))
+
+            self.m_button111.SetBackgroundColour(
+                wx.Colour(39, 44, 52))
+            self.m_button111.SetForegroundColour(
+                wx.Colour(255, 255, 255))
+        
+
+    def on_leave_window(self, event=None):
+        try:
+            #change button background color
+            event.GetEventObject().SetBackgroundColour(
+                wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+            font_colour = eval(self.theme["notebook_right"]["colour"])
+            #颜色取反
+            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
+            event.GetEventObject().SetForegroundColour(wx.Colour(font_colour))
+        except:
+            self.m_button1.SetBackgroundColour(
+                wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+            font_colour = eval(self.theme["notebook_right"]["colour"])
+            #颜色取反
+            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
+            self.m_button1.SetForegroundColour(wx.Colour(font_colour))
+
+            self.m_button11.SetBackgroundColour(
+                wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+            font_colour = eval(self.theme["notebook_right"]["colour"])
+            #颜色取反
+            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
+            self.m_button11.SetForegroundColour(wx.Colour(font_colour))
+
+            self.m_button111.SetBackgroundColour(
+                wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+            font_colour = eval(self.theme["notebook_right"]["colour"])
+            #颜色取反
+            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
+            self.m_button111.SetForegroundColour(wx.Colour(font_colour))
 
     def __del__(self):
         pass

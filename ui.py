@@ -49,7 +49,7 @@ class MyFrame1(wx.Frame):
         self.theme = {
             "kind": 1,
             "default_font": {
-                "size": 18,
+                "size": 13,
                 "family": "wx.FONTFAMILY_DEFAULT",
                 "style": "wx.FONTSTYLE_NORMAL",
                 "weight": "wx.FONTWEIGHT_NORMAL",
@@ -79,6 +79,16 @@ class MyFrame1(wx.Frame):
                     wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False,
                     "Microsoft YaHei UI"))
         self.SetMinSize(wx.Size(600, 400))
+        #添加图标
+        icon = wx.Icon(get_file('\\images\\icon.ico'), wx.BITMAP_TYPE_ICO)
+        self.SetIcon(icon)
+
+        self.image_list = wx.ImageList(16, 16)
+        self.image_list.Add(wx.Bitmap(get_file('\\images\\encrypted.png')))
+
+
+        
+
 
         menubar = wx.MenuBar(0)
         toolMenu = wx.Menu()
@@ -183,6 +193,8 @@ class MyFrame1(wx.Frame):
                 eval(self.theme["default_font"]["weight"]), False if
                 self.theme["default_font"]["underline"] == "false" else True,
                 self.theme["default_font"]["face_name"]))
+        #image_list 
+        self.note_list.AssignImageList(self.image_list)
 
         bSizer5.Add(self.note_list, 0, wx.ALL, 0)
 
@@ -237,15 +249,23 @@ class MyFrame1(wx.Frame):
         gbSizer2.Add(self.time_text, wx.GBPosition(0, 2), wx.GBSpan(1, 1),
                      wx.ALL | wx.ALIGN_BOTTOM, 5)
 
-        self.m_button1 = wx.Button(
-            self.m_panel26, wx.ID_ANY, u"添加新的笔记", wx.DefaultPosition,
-            wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_NONE | wx.BORDER_SIMPLE
-            | wx.BORDER_THEME)
+        self.m_button1 = wx.Button(self.m_panel26, wx.ID_ANY, u"添加新的笔记",)
+        #无边框
+        self.m_button1.SetWindowStyle(wx.BORDER_NONE)
+        #添加图标
+        self.m_button1.SetBitmap(
+            wx.Bitmap(
+                get_file("\\images\\new_paper.png"),
+                wx.BITMAP_TYPE_ANY))
+        self.m_button1.SetBitmapMargins(0, 0)
+        self.m_button1.SetBitmapPosition(wx.LEFT)
+        
 
-        self.m_button1.SetBitmapFocus(wx.NullBitmap)
+        
         self.m_button1.SetFont(
-            wx.Font(15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
-                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+            wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+        self.m_button1.SetBackgroundColour(
+            wx.Colour(eval(self.theme["notebook_right"]["colour"])))
 
         gbSizer2.Add(self.m_button1, wx.GBPosition(1, 0), wx.GBSpan(1, 1),
                      wx.TOP | wx.RIGHT | wx.LEFT, 15)
@@ -255,8 +275,16 @@ class MyFrame1(wx.Frame):
             wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_NONE | wx.BORDER_SIMPLE
             | wx.BORDER_THEME)
         self.m_button11.SetFont(
-            wx.Font(15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
-                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+            wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+        self.m_button11.SetBackgroundColour(
+            wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+        #添加图标
+        self.m_button11.SetBitmap(
+            wx.Bitmap(
+                get_file("\\images\\new_book.png"),
+                wx.BITMAP_TYPE_ANY))
+        self.m_button11.SetBitmapMargins(0, 0)
+        self.m_button11.SetBitmapPosition(wx.LEFT)
 
         gbSizer2.Add(self.m_button11, wx.GBPosition(2, 0), wx.GBSpan(1, 1),
                      wx.TOP | wx.RIGHT | wx.LEFT, 15)
@@ -266,8 +294,10 @@ class MyFrame1(wx.Frame):
             wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_NONE | wx.BORDER_SIMPLE
             | wx.BORDER_THEME)
         self.m_button111.SetFont(
-            wx.Font(15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
-                    wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
+            wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+        self.m_button111.SetBackgroundColour(
+            wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+        
 
         gbSizer2.Add(self.m_button111, wx.GBPosition(3, 0), wx.GBSpan(1, 1),
                      wx.ALL, 15)
@@ -307,6 +337,14 @@ class MyFrame1(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.on_close)
         self.note_list.Bind(wx.EVT_TREE_SEL_CHANGED, self.note_list_is_changed)
 
+        self.m_button1.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
+        self.m_button11.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
+        self.m_button111.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
+
+        self.m_button1.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
+        self.m_button11.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
+        self.m_button111.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
+
     def __del__(self):
         pass
 
@@ -344,6 +382,11 @@ class MyFrame1(wx.Frame):
     def new_note(self, event):
         event.Skip()
 
+    def on_enter_window(self, event):
+        event.Skip()
+
+    def on_leave_window(self, event):
+        event.Skip()
 
 
 

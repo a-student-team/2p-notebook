@@ -13,5 +13,7 @@ class HelpFrame(wx.Frame):
         self.SetSizer(sizer)
         self.SetAutoLayout(True)
         self.Show()
+        icon = wx.Icon(get_file('\\images\\icon.ico'), wx.BITMAP_TYPE_ICO)
+        self.SetIcon(icon)
     def OnLoaded(self, event):
         pass

@@ -1,5 +1,7 @@
+from tkinter.ttk import Style
 import wx
 from wx import html2
+from get_file import get_file
 class EditFrame1(wx.Frame):
     # edit note frame
     def __init__(
@@ -23,7 +25,9 @@ class EditFrame1(wx.Frame):
         #on main window
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
         sizer = wx.BoxSizer(wx.VERTICAL)
-        self.browser = html2.WebView.New(self)
+        self.browser = html2.WebView.New(self, style=wx.BORDER_NONE)
+        #取消边框
+        
         sizer.Add(self.browser, 1, wx.EXPAND, 0)
         self.SetSizer(sizer)
         self.Centre(wx.BOTH)
@@ -37,6 +41,8 @@ class EditFrame(EditFrame1):
         self.paper_title = paper_title
         self.Bind(html2.EVT_WEBVIEW_LOADED, self.OnPageLoaded,
                   self.browser)
+        icon = wx.Icon(get_file('\\images\\icon.ico'), wx.BITMAP_TYPE_ICO)
+        self.SetIcon(icon)
 
     def OnPageLoaded(self, event):
         event.Skip()
