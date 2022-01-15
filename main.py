@@ -3,7 +3,7 @@ from wx import html2
 
 from ui import MyFrame1
 from get_file import get_file
-from EditFrame import EditFrame
+from EditFrame import EditFrame, EditPanel
 from CreateDialog import CreateDialog
 from FastNote import FastNote
 from SettingFrame import SettingFrame
@@ -30,6 +30,8 @@ class MainFrame(MyFrame1):
         # the data like {'book':{'type':'1','note':'content',...},...}
         self.note_data = {}
         self.key = {} #eg. {'note':'key',...}
+
+        self.temp_text = "" #temp text for edit_browser
         
         
         
@@ -49,7 +51,7 @@ class MainFrame(MyFrame1):
         for book in self.note_data:
             if book.find("NgsAABwEVA==")!= -1:
                 print(book)
-                book_item = self.note_list.AppendItem(self.note_list.GetRootItem(), book[12:]) 
+                book_item = self.note_list.AppendItem(self.note_list.GetRootItem(), book[12:], image=0) 
                 
             else:
                 print(book)
@@ -71,6 +73,7 @@ class MainFrame(MyFrame1):
         if self.edit_count != 0:
             self._note_list_is_changed = True
             #set win topic a "*"
+            print(self.Title)
             self.Title = "*" + self.Title if self.Title[0] != "*" else self.Title
             
         self.edit_count += 1
@@ -210,8 +213,10 @@ class MainFrame(MyFrame1):
             dialog.ShowModal()
             dialog.Destroy()
             return None
-
-        name = CreateDialog(self, "新笔记").m_textCtrl1.GetValue()
+        try:
+            name = str(CreateDialog(self, "新笔记").m_textCtrl1.GetValue())
+        except:
+            return None
 
         if name == '':
             return None
@@ -242,7 +247,10 @@ class MainFrame(MyFrame1):
     def new_book(self, event):
 
         dialog = CreateDialog(self, "新笔记本", True)
-        name = str(dialog.m_textCtrl1.GetValue())
+        try:
+            name = str(dialog.m_textCtrl1.GetValue())
+        except:
+            return None
         if self._book_in_note_data(name) or self._book_in_note_data("NgsAABwEVA=="+name):
             dialog = wx.MessageDialog(
                 self, '名字重复啦, 笔记本已存在', '提示', wx.OK | wx.ICON_INFORMATION)
@@ -338,11 +346,17 @@ class MainFrame(MyFrame1):
             self.edit_theme()
         elif id == wx.ID_HELP:
             self.help()
+        elif id == self.ID_SETTING:
+            self.setting()
         else:
             event.Skip()
 
     def help(self, event=None):
         frame = HelpFrame(self)
+        frame.Show()
+
+    def setting(self, event=None):
+        frame = SettingFrame(self)
         frame.Show()
 
     def save_as(self, event):
@@ -370,8 +384,10 @@ class MainFrame(MyFrame1):
         dialog.Destroy()
     def save(self, event):
         self.write_note_data_to_file()
+        self.edit_browser_save(object=self.edit_panel, root=self.selectioned)
         self._note_list_is_changed = False
-        self.Title = self.Title[1:]
+        self.Title = self.Title[1:] if self.Title[0] == "*" else self.Title
+        
 
     def open(self, event):
         # open xxx.note in local file, use file dialog
@@ -464,16 +480,25 @@ class MainFrame(MyFrame1):
     def open_note(self, event):
         # use EditFrame
         # if item's parent is root , don't open it
-
+        print(self.temp_text)
+        
+        if self.temp_text != self.edit_panel.browser.RunScript("getText()")[1] and self.edit_panel.IsShown():
+            
+            dialog = wx.MessageDialog(
+                self, '笔记未保存，是否保存？', '提示', wx.YES_NO | wx.ICON_INFORMATION)
+            if dialog.ShowModal() == wx.ID_YES:
+                self.save(None)
+            dialog.Destroy()
         root = self.note_list.GetSelection()
+        self.selectioned = root
         if self.note_list.GetItemParent(root) == self.note_list.GetRootItem():
             return None
         if root == self.note_list.GetRootItem():
             return None
         else:
-            #全屏
-            edit_browser = EditFrame(self, title="编辑笔记", size=wx.Size(wx.GetDisplaySize())
-            , paper_title=self.note_list.GetItemText(root))
+            self.edit_panel.SetSize(self.GetSize()[0]-self.m_panel10.GetSize()[0], self.m_panel10.GetSize()[1])
+            self.edit_panel.browser.SetSize(self.edit_panel.GetSize())
+
             try:
                 text = self.note_data["NgsAABwEVA=="+self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)]
                 #如果加密, 则提醒用户输入密码解密
@@ -488,17 +513,20 @@ class MainFrame(MyFrame1):
                     text = ""
             except:
                 text = self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)]
-            edit_browser.browser.LoadURL(get_file('\\html\\edit.html?text={}'.format(text)))
-            edit_browser.Show()
-            edit_browser.Bind(wx.EVT_CLOSE, lambda event: self.edit_browser_close(event, root))
+            #创建临时text用于判断是否改变文本
+            self.temp_text = text
+            print(self.temp_text)
+            self.edit_panel.browser.LoadURL(get_file('\\html\\edit.html?text={}'.format(text)))
+            self.edit_panel.Show()
+            self.gbSizer2_panel.Hide()
             # when it open, give a value to edit_browser.browser
-            edit_browser.Bind(html2.EVT_WEBVIEW_LOADED, lambda event: self.edit_browser_open(event, root))
+            self.edit_panel.Bind(html2.EVT_WEBVIEW_LOADED, lambda event: self.edit_browser_open(event, root))
             
     def edit_browser_open(self, event, root=None):
         pass
         
 
-    def edit_browser_close(self, event, root=None):
+    def edit_browser_save(self, event=None, root=None, object=None):
         #ask user save or not
         # if save, use html2.runScript the function getText() to get text and save it into note_data
         self.note_list_is_changed()
@@ -507,13 +535,15 @@ class MainFrame(MyFrame1):
         if self.note_list.GetItemParent(root) == self.note_list.GetRootItem():
             return None
         else:
-            edit_browser = event.GetEventObject()
+            try:
+                edit_browser = event.GetEventObject()
+            except:
+                edit_browser = object
             text = edit_browser.browser.RunScript("getText()")
             try:
                 self.note_data[self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)] = text[1]
             except:
                 self.note_data["NgsAABwEVA=="+self.note_list.GetItemText(self.note_list.GetItemParent(root))][self.note_list.GetItemText(root)] = encrypt(text[1], self._key)
-            edit_browser.Destroy()
             self.note_list.ExpandAll()
         
     
@@ -561,8 +591,13 @@ class MainFrame(MyFrame1):
             #刷新界面
             self.m_panel26.SetBackgroundColour(
             wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+            self.gbSizer2_panel.SetBackgroundColour(
+            wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+            self.edit_panel.SetBackgroundColour(
+            wx.Colour(eval(self.theme["notebook_right"]["colour"])))
             self.m_panel10.SetBackgroundColour(
             (wx.Colour(eval(self.theme["notebook_left"]["colour"]))))
+            
 
 
             self.m_staticText9.SetFont(
@@ -585,6 +620,12 @@ class MainFrame(MyFrame1):
             self.time_text.SetFont(
             wx.Font(self.theme["time_text"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]), eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
             self.time_text.SetForegroundColour(wx.Colour(eval(self.theme["time_text"]["colour"])))
+            self.welcome.SetFont(
+            wx.Font(self.theme["default_font"]["size"]+3, eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]), wx.FONTWEIGHT_BOLD, False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+            self.welcome.SetForegroundColour(wx.Colour(eval(self.theme["morning_night_topic"]["colour"])))
+            self.help_text.SetFont(
+            wx.Font(self.theme["default_font"]["size"]+3, eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]), wx.FONTWEIGHT_BOLD, False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+            self.help_text.SetForegroundColour(wx.Colour(eval(self.theme["morning_night_topic"]["colour"])))
             self.m_button1.SetFont(
                 wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
             self.m_button11.SetFont(
@@ -636,6 +677,11 @@ class MainFrame(MyFrame1):
                 wx.Colour(39, 44, 52))
             self.m_button111.SetForegroundColour(
                 wx.Colour(255, 255, 255))
+
+            self.help_button.SetBackgroundColour(
+                wx.Colour(39, 44, 52))
+            self.help_button.SetForegroundColour(
+                wx.Colour(255, 255, 255))
         
 
     def on_leave_window(self, event=None):
@@ -648,6 +694,7 @@ class MainFrame(MyFrame1):
             font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
             event.GetEventObject().SetForegroundColour(wx.Colour(font_colour))
         except:
+            #刷新一遍按钮
             self.m_button1.SetBackgroundColour(
                 wx.Colour(eval(self.theme["notebook_right"]["colour"])))
             font_colour = eval(self.theme["notebook_right"]["colour"])
@@ -669,6 +716,18 @@ class MainFrame(MyFrame1):
             font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
             self.m_button111.SetForegroundColour(wx.Colour(font_colour))
 
+            self.help_button.SetBackgroundColour(
+                wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+            font_colour = eval(self.theme["notebook_right"]["colour"])
+            #颜色取反
+            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
+            self.help_button.SetForegroundColour(wx.Colour(font_colour))
+
+    def on_size(self, event):
+        #刷新
+        self.edit_panel.SetSize(self.GetSize()[0]-self.m_panel10.GetSize()[0], self.m_panel10.GetSize()[1])
+        self.edit_panel.browser.SetSize(self.edit_panel.GetSize())
+        self.edit_panel.Refresh()
     def __del__(self):
         pass
 

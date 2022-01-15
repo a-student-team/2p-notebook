@@ -52,5 +52,5 @@ class CreateDialog (wx.Dialog):  # 名字输入框
         pass
 
     def close(self, event):
-        
+        self.m_textCtrl1.Destroy()
         self.Destroy()

@@ -12,7 +12,7 @@ from wx.core import BLACK
 import wx.xrc
 from wx import html2
 import wx.lib.agw.customtreectrl as treectrl
-from EditFrame import EditFrame as EditFrame1
+from EditFrame import EditPanel
 
 import os
 
@@ -159,6 +159,7 @@ class MyFrame1(wx.Frame):
             (wx.Colour(eval(self.theme["notebook_left"]["colour"]))))
 
         self.m_panel10.SetMinSize(wx.Size(200, 500))
+        self.m_panel10.SetMaxSize(wx.Size(200, -1))
 
         bSizer5 = wx.BoxSizer(wx.VERTICAL)
 
@@ -202,17 +203,32 @@ class MyFrame1(wx.Frame):
         self.m_panel10.Layout()
         gbSizer1.Add(self.m_panel10, wx.GBPosition(0, 0), wx.GBSpan(1, 1),
                      wx.EXPAND | wx.ALL, 0)
+        
+
 
         self.m_panel26 = wx.Panel(self, wx.ID_ANY, wx.DefaultPosition,
-                                  wx.Size(700, 700), wx.TAB_TRAVERSAL)
+                                  wx.Size(800, 700), wx.TAB_TRAVERSAL)
         self.m_panel26.SetBackgroundColour(
             wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+
+        self.edit_panel = EditPanel(self.m_panel26, size=wx.Size(800, 700))
+        self.edit_panel.SetBackgroundColour(
+            wx.Colour(0, 0, 0))
+        self.edit_panel.browser.LoadURL(get_file("\\html\\edit.html"))
+        
+        
+        self.gbSizer2_panel = wx.Panel(self.m_panel26, wx.ID_ANY,
+                                        wx.DefaultPosition, wx.Size(800, 700),
+                                        wx.TAB_TRAVERSAL)
+        self.gbSizer2_panel.SetBackgroundColour(
+            wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+        
 
         gbSizer2 = wx.GridBagSizer(0, 0)
         gbSizer2.SetFlexibleDirection(wx.BOTH)
         gbSizer2.SetNonFlexibleGrowMode(wx.FLEX_GROWMODE_SPECIFIED)
 
-        self.morning_night = wx.StaticText(self.m_panel26, wx.ID_ANY, u"早上好",
+        self.morning_night = wx.StaticText(self.gbSizer2_panel, wx.ID_ANY, u"早上好",
                                            wx.DefaultPosition, wx.DefaultSize,
                                            0)
         self.morning_night.Wrap(-1)
@@ -231,7 +247,7 @@ class MyFrame1(wx.Frame):
         gbSizer2.Add(self.morning_night, wx.GBPosition(0, 0), wx.GBSpan(1, 2),
                      wx.ALL, 10)
 
-        self.time_text = wx.StaticText(self.m_panel26, wx.ID_ANY, u"time",
+        self.time_text = wx.StaticText(self.gbSizer2_panel, wx.ID_ANY, u"time",
                                        wx.DefaultPosition, wx.DefaultSize, 0)
         self.time_text.Wrap(-1)
 
@@ -249,7 +265,7 @@ class MyFrame1(wx.Frame):
         gbSizer2.Add(self.time_text, wx.GBPosition(0, 2), wx.GBSpan(1, 1),
                      wx.ALL | wx.ALIGN_BOTTOM, 5)
 
-        self.welcome = wx.StaticText(self.m_panel26, wx.ID_ANY, u"欢迎使用笔记本, 你可以....",
+        self.welcome = wx.StaticText(self.gbSizer2_panel, wx.ID_ANY, u"欢迎使用笔记本, 你可以....",
                                 wx.DefaultPosition, wx.DefaultSize, 0)
         self.welcome.Wrap(-1)
 
@@ -263,7 +279,7 @@ class MyFrame1(wx.Frame):
             wx.Colour(welcome_font_colour))
         gbSizer2.Add(self.welcome, wx.GBPosition(1, 0), wx.GBSpan(1, 1), wx.ALL, 5)
 
-        self.m_button1 = wx.Button(self.m_panel26, wx.ID_ANY, u"添加新的笔记",)
+        self.m_button1 = wx.Button(self.gbSizer2_panel, wx.ID_ANY, u"添加新的笔记",)
         #无边框
         self.m_button1.SetWindowStyle(wx.BORDER_NONE)
         #添加图标
@@ -285,7 +301,7 @@ class MyFrame1(wx.Frame):
                      wx.TOP | wx.RIGHT | wx.LEFT, 15)
 
         self.m_button11 = wx.Button(
-            self.m_panel26, wx.ID_ANY, u"添加新的笔记本", wx.DefaultPosition,
+            self.gbSizer2_panel, wx.ID_ANY, u"添加新的笔记本", wx.DefaultPosition,
             wx.DefaultSize,  wx.BORDER_NONE | wx.BORDER_SIMPLE
             | wx.BORDER_THEME)
         self.m_button11.SetFont(
@@ -304,7 +320,7 @@ class MyFrame1(wx.Frame):
                      wx.TOP | wx.RIGHT | wx.LEFT, 15)
 
         self.m_button111 = wx.Button(
-            self.m_panel26, wx.ID_ANY, u"添加新的便签", wx.DefaultPosition,
+            self.gbSizer2_panel, wx.ID_ANY, u"添加新的便签", wx.DefaultPosition,
             wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE
             | wx.BORDER_THEME)
             
@@ -319,7 +335,7 @@ class MyFrame1(wx.Frame):
         
                         
 
-        self.help_text = wx.StaticText(self.m_panel26, wx.ID_ANY, u"或者你可以获取帮助",
+        self.help_text = wx.StaticText(self.gbSizer2_panel, wx.ID_ANY, u"更多",
                                     wx.DefaultPosition, wx.DefaultSize, 0)
         self.help_text.Wrap(-1)
 
@@ -334,25 +350,44 @@ class MyFrame1(wx.Frame):
             wx.Colour(help_text_colour))
         gbSizer2.Add(self.help_text, wx.GBPosition(5, 0), wx.GBSpan(1, 1),
                         wx.ALL, 5)
-        self.help_button = wx.Button(self.m_panel26, wx.ID_ANY, u"帮助", wx.DefaultPosition,
+        self.help_button = wx.Button(self.gbSizer2_panel, wx.ID_ANY, u"帮助", wx.DefaultPosition,
                                 wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE
                                 | wx.BORDER_THEME)
         self.help_button.SetFont(
             wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
         self.help_button.SetBackgroundColour(
             wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+        self.help_button.SetBitmap(
+            wx.Bitmap(
+                get_file("\\images\\help.png"),
+                wx.BITMAP_TYPE_ANY))
+        self.help_button.SetBitmapMargins(0, 0)
+        self.help_button.SetBitmapPosition(wx.LEFT)
+        
         
         gbSizer2.Add(self.help_button, wx.GBPosition(6, 0), wx.GBSpan(1, 1),
                         wx.TOP | wx.RIGHT | wx.LEFT, 15)
-
-        self.m_panel26.SetSizer(gbSizer2)
-
+        
+        self.gbSizer2_panel.SetSizer(gbSizer2)
+        
+        gbSizer_right = wx.GridBagSizer(0, 0)
+        gbSizer_right.Add(self.gbSizer2_panel, wx.GBPosition(0, 0), wx.GBSpan(1, 1),
+                            wx.EXPAND, 0)
+        gbSizer_right.Add(self.edit_panel, wx.GBPosition(1, 0), wx.GBSpan(1, 1),
+                            wx.EXPAND, 0)
+        self.edit_panel.Hide()
         
 
+        self.m_panel26.SetSizer(gbSizer_right)
+
         self.m_panel26.Layout()
+        self.m_panel26.Refresh()
+        self.m_panel26.Update()
         
         gbSizer1.Add(self.m_panel26, wx.GBPosition(0, 1), wx.GBSpan(1, 1),
                      wx.EXPAND | wx.ALL, 0)
+        
+        
         
         
 
@@ -384,7 +419,7 @@ class MyFrame1(wx.Frame):
         self.Bind(wx.EVT_MENU, self.menuHandler)
         self.note_list.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.open_note)
         self.Bind(wx.EVT_CLOSE, self.on_close)
-        self.note_list.Bind(wx.EVT_TREE_SEL_CHANGED, self.note_list_is_changed)
+        
 
         self.m_button1.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
         self.m_button11.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
@@ -395,11 +430,17 @@ class MyFrame1(wx.Frame):
         self.m_button11.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
         self.m_button111.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
         self.help_button.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
+        #当窗口大小改变时，更新大小
+        self.edit_panel.Bind(wx.EVT_SIZE, self.on_size)
 
     def __del__(self):
         pass
 
     # Virtual event handlers, override them in your derived class
+    def on_size(self, event):
+
+        event.Skip()
+
     def note_list_is_changed(self, event):
         event.Skip()
 
