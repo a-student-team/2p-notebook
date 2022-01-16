@@ -15,43 +15,12 @@
   </head>
 
     <textarea id="editor" name="editor" rows="5" style="display: none;"></textarea>
+    
 
     <script src="HandyEditor.min.js"></script>
     <script src="jquery-3.6.0.min.js"></script>
-    <script type="text/javascript">
-
-      var he = HE.getEditor('editor');
-      
-      function getQueryString(name) {  
-        //正则表达式，获取地址中的参数
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-        //匹配目标参数
-        var r = window.location.search.substr(1).match(reg);
-        //返回参数值
-        if (r != null) return unescape(r[2]);
-        return null;
- 
-      }
-      function getHtml(){
-        return he.getHtml();
-
-      }
-      function getText(){
-        return he.getText();
-      }
-      
-      
-      /*给变量he一个值*/
-      function setText(html){
-        return he.set(html);
-      }
-
-      var text = getQueryString("text");
-      setText(text)
-      
-      
-      
-    </script>
+    <script src="edit.js"></script>
+    
     
   </body>
   

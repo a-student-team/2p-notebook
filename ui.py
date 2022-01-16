@@ -96,11 +96,11 @@ class MyFrame1(wx.Frame):
         helpMenu = wx.Menu()
         newMenu = wx.Menu()
         self.nearlyfileMenu = wx.Menu()
-        newMenu.Append(wx.ID_NEW, u"新建笔记", wx.EmptyString, wx.ITEM_NORMAL)
-        newMenu.Append(wx.ID_FILE, u"新建笔记本", wx.EmptyString, wx.ITEM_NORMAL)
+        newMenu.Append(wx.ID_NEW, u"新建笔记(&B)", wx.EmptyString, wx.ITEM_NORMAL)
+        newMenu.Append(wx.ID_FILE, u"新建笔记本(&N)", wx.EmptyString, wx.ITEM_NORMAL)
         fileMenu.Append(wx.ID_ANY, u"新建", newMenu)
         fileMenu.AppendSeparator()
-        fileMenu.Append(wx.ID_OPEN, u"打开", wx.EmptyString, wx.ITEM_NORMAL)
+        fileMenu.Append(wx.ID_OPEN, u"打开(&O)", wx.EmptyString, wx.ITEM_NORMAL)
         #tool menu
         thememenu = wx.Menu()
         thememenu.Append(self.ID_THEME_DEFAULT, u"默认主题", wx.EmptyString,
@@ -137,7 +137,7 @@ class MyFrame1(wx.Frame):
         fileMenu.Append(wx.ID_ANY, u"最近打开", self.nearlyfileMenu)
 
         fileMenu.AppendSeparator()
-        fileMenu.Append(wx.ID_SAVE, u"保存", wx.EmptyString, wx.ITEM_NORMAL)
+        fileMenu.Append(wx.ID_SAVE, u"保存(&S)", wx.EmptyString, wx.ITEM_NORMAL)
         fileMenu.Append(wx.ID_SAVEAS, u"另存为", wx.EmptyString, wx.ITEM_NORMAL)
         fileMenu.AppendSeparator()
         fileMenu.Append(wx.ID_EXIT, u"退出", wx.EmptyString, wx.ITEM_NORMAL)
@@ -211,10 +211,10 @@ class MyFrame1(wx.Frame):
         self.m_panel26.SetBackgroundColour(
             wx.Colour(eval(self.theme["notebook_right"]["colour"])))
 
-        self.edit_panel = EditPanel(self.m_panel26, size=wx.Size(800, 700))
+        '''self.edit_panel = EditPanel(self.m_panel26, size=wx.Size(800, 700))
         self.edit_panel.SetBackgroundColour(
             wx.Colour(0, 0, 0))
-        self.edit_panel.browser.LoadURL(get_file("\\html\\edit.html"))
+        self.edit_panel.browser.LoadURL(get_file("\\html\\edit.html"))'''
         
         
         self.gbSizer2_panel = wx.Panel(self.m_panel26, wx.ID_ANY,
@@ -373,9 +373,9 @@ class MyFrame1(wx.Frame):
         gbSizer_right = wx.GridBagSizer(0, 0)
         gbSizer_right.Add(self.gbSizer2_panel, wx.GBPosition(0, 0), wx.GBSpan(1, 1),
                             wx.EXPAND, 0)
-        gbSizer_right.Add(self.edit_panel, wx.GBPosition(1, 0), wx.GBSpan(1, 1),
+        '''gbSizer_right.Add(self.edit_panel, wx.GBPosition(1, 0), wx.GBSpan(1, 1),
                             wx.EXPAND, 0)
-        self.edit_panel.Hide()
+        self.edit_panel.Hide()'''
         
 
         self.m_panel26.SetSizer(gbSizer_right)
@@ -417,6 +417,7 @@ class MyFrame1(wx.Frame):
         self.m_panel10.Bind(wx.EVT_RIGHT_DOWN, self.show_menu)
         self.note_list.Bind(wx.EVT_RIGHT_DOWN, self.show_menu)
         self.Bind(wx.EVT_MENU, self.menuHandler)
+        
         self.note_list.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.open_note)
         self.Bind(wx.EVT_CLOSE, self.on_close)
         
@@ -430,15 +431,19 @@ class MyFrame1(wx.Frame):
         self.m_button11.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
         self.m_button111.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
         self.help_button.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
+
+        self.Bind(wx.EVT_CHAR_HOOK, self.on_key_down)
         #当窗口大小改变时，更新大小
-        self.edit_panel.Bind(wx.EVT_SIZE, self.on_size)
+        '''self.edit_panel.Bind(wx.EVT_SIZE, self.on_size)'''
 
     def __del__(self):
         pass
 
     # Virtual event handlers, override them in your derived class
     def on_size(self, event):
+        event.Skip()
 
+    def on_key_down(self, event):
         event.Skip()
 
     def note_list_is_changed(self, event):
