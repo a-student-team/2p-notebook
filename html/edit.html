@@ -24,10 +24,12 @@
       
       function getQueryString(name) {  
         //正则表达式，获取地址中的参数
-        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");  
-        var r = window.location.search.substr(1).match(reg);  
- 
-        if (r != null) return unescape(r[2]); return null; 
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        //匹配目标参数
+        var r = window.location.search.substr(1).match(reg);
+        //返回参数值
+        if (r != null) return unescape(r[2]);
+        return null;
  
       }
       function getHtml(){
@@ -44,8 +46,7 @@
         return he.set(html);
       }
 
-      var text = getQueryString("text")
-      var DefaultText = decodeURI(text)
+      var text = getQueryString("text");
       setText(text)
       
       

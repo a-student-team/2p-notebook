@@ -15,15 +15,17 @@ class EditPanel(wx.Panel):
                          wx.TAB_TRAVERSAL)
         sizer = wx.BoxSizer(wx.VERTICAL)
         self.browser = html2.WebView.New(self, style=wx.BORDER_NONE)
-         
+        
         sizer.Add(self.browser, 1, wx.EXPAND|wx.ALL, 0)
         self.SetSizer(sizer)
         self.Centre(wx.BOTH)
 
         self.paper_title = paper_title
         self.Bind(html2.EVT_WEBVIEW_LOADED, self.OnPageLoaded, self.browser)
-        
-        
+
+    def _init_ui(self):
+
+        pass
 
     def OnPageLoaded(self, event):
         event.Skip()
