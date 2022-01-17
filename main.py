@@ -3,13 +3,15 @@ from wx import html2
 
 from ui import MyFrame1
 from get_file import get_file
-from EditFrame import EditPanel, EditFrame
+from EditFrame import EditFrame
 from CreateDialog import CreateDialog
 from FastNote import FastNote
 from SettingFrame import SettingFrame
 from encryption import encrypt, decrypt
 from EncryptDialog import EncryptDialog
 from HelpFrame import HelpFrame
+from SelectFrame import SelectImportDialog, SelectExportDialog
+from AboutFrame import AboutFrame
 import os
 import time
 import json
@@ -121,7 +123,22 @@ class MainFrame(MyFrame1):
         except:
             return False
             
-            
+    def get_select_data(self, data):
+        # get select data
+        try:
+            self.note_data.update(data)
+            print(self.note_data)
+            return True
+        except:
+            return False
+    def write_select_data(self, data, file_path):
+        # write select data to file
+        try:
+            with open(file_path, 'w', encoding="utf-8") as f:
+                f.write(str(data))
+                return True
+        except:
+            return False
     def write_note_data_to_file(self, file_path=get_file('\\data\\note\\main.note')):
         #write note_data to local file
         '''
@@ -345,9 +362,60 @@ class MainFrame(MyFrame1):
             self.help()
         elif id == self.ID_SETTING:
             self.setting()
+        elif id == self.ID_SELECT_OPEN:
+            self.select_open()
+        elif id == self.ID_SELECT_SAVE:
+            self.select_save()
+        elif id == wx.ID_ABOUT:
+            self.about()
         else:
             event.Skip()
 
+    def about(self, event=None):
+        frame = AboutFrame(self)
+        frame.Show()
+
+    def select_open(self, event=None):
+        frame = SelectImportDialog(self)
+        frame.ShowModal()
+
+        get = frame.check_tree
+        file_path = frame.file_path
+
+        print(get)
+        if get != []:
+            self.file_path.append(file_path)
+            if not self.get_select_data(get):
+                message = wx.MessageDialog(self, '导入失败', '提示', wx.OK | wx.ICON_INFORMATION)   
+                message.ShowModal()
+                message.Destroy()
+            else:
+                message = wx.MessageDialog(self, '导入成功', '提示', wx.OK | wx.ICON_INFORMATION)
+                message.ShowModal()
+                message.Destroy()
+        else:
+            return None
+
+    def select_save(self, event=None):
+        frame = SelectExportDialog(self, self.note_data)
+        frame.ShowModal()
+
+        get = frame.check_tree
+        file_path = frame.file_path     
+
+        print(get)
+        if get != []:
+            self.file_path.append(file_path)
+            if not self.write_select_data(get, file_path):
+                message = wx.MessageDialog(self, '导出失败', '提示', wx.OK | wx.ICON_INFORMATION)   
+                message.ShowModal()
+                message.Destroy()
+            else:
+                message = wx.MessageDialog(self, '导出成功', '提示', wx.OK | wx.ICON_INFORMATION)
+                message.ShowModal()
+                message.Destroy()
+        else:
+            return None
     def help(self, event=None):
         frame = HelpFrame(self)
         frame.Show()

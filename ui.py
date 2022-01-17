@@ -37,6 +37,8 @@ class MyFrame1(wx.Frame):
     ID_THEME_DARK = wx.NewId()
     ID_THEME_LIGHT = wx.NewId()
     ID_THEME_OTHER = wx.NewId()
+    ID_SELECT_OPEN = wx.NewId()
+    ID_SELECT_SAVE = wx.NewId()
 
     def __init__(self, parent):
         wx.Frame.__init__(self,
@@ -139,6 +141,9 @@ class MyFrame1(wx.Frame):
         fileMenu.AppendSeparator()
         fileMenu.Append(wx.ID_SAVE, u"保存(&S)", wx.EmptyString, wx.ITEM_NORMAL)
         fileMenu.Append(wx.ID_SAVEAS, u"另存为", wx.EmptyString, wx.ITEM_NORMAL)
+        fileMenu.AppendSeparator()
+        fileMenu.Append(self.ID_SELECT_OPEN, u"选择导入", wx.EmptyString, wx.ITEM_NORMAL)
+        fileMenu.Append(self.ID_SELECT_SAVE, u"选择导出", wx.EmptyString, wx.ITEM_NORMAL)
         fileMenu.AppendSeparator()
         fileMenu.Append(wx.ID_EXIT, u"退出", wx.EmptyString, wx.ITEM_NORMAL)
 
