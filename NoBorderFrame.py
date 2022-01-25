@@ -4,19 +4,19 @@ class NoBorderFrame(wx.Frame):
     # a frame that has a sizer without borders
     def __init__(self,
                  parent,
+                 style=wx.DEFAULT_FRAME_STYLE,
                  id=wx.ID_ANY,
                  title=wx.EmptyString,
                  pos=wx.DefaultPosition,
                  size=wx.DefaultSize,
-                 style=wx.NO_BORDER,
-                 name=wx.FrameNameStr):
+                 name=wx.FrameNameStr,):
         wx.Frame.__init__(self,
                           parent,
                           id=id,
                           title=title,
                           size=size,
                           pos=pos,
-                          style=style,
+                          style=wx.NO_BORDER | style,
                           name=name)
 
         self.Center()
@@ -34,15 +34,14 @@ class NoBorderFrame(wx.Frame):
             wx.ID_ANY,
             self.close_bitmap,
             style=wx.BU_AUTODRAW | wx.BORDER_NONE | wx.BU_RIGHT,
-            size=(self.close_bitmap.GetWidth() + 5,
-                  self.close_bitmap.GetHeight() + 5))
+            size=(30, 30))
         # set background color like frame
         self.close_button.SetBackgroundColour(self.GetBackgroundColour())
-        self.close_button.SetBitmapFocus(
-            wx.Bitmap(get_file('\\images\\close_focus.png'),
-                      wx.BITMAP_TYPE_PNG))
+        self.close_button.Bind(wx.EVT_ENTER_WINDOW, self.close_btn_enter_window)
+        self.close_button.Bind(wx.EVT_LEAVE_WINDOW, self.close_btn_leave_window)
 
         self.sizer.Add(self.close_button, 0, wx.ALL | wx.ALIGN_RIGHT, 0)
+        self.print_title_sizer()
         self.Layout()
         self.main_sizer.Add(self.sizer, 0, wx.ALL | wx.ALIGN_RIGHT, 0)
         self.print_screen()
@@ -53,6 +52,19 @@ class NoBorderFrame(wx.Frame):
         # bind events
         self.close_button.Bind(wx.EVT_BUTTON, self.OnClose)
         self.Bind(wx.EVT_MOUSE_EVENTS, self.OnMouse)
+    
+    def close_btn_enter_window(self, event):
+        self.close_button.SetBackgroundColour(wx.Colour(245, 90, 83))
+        self.close_button.Refresh()
+        event.Skip()
+    
+    def close_btn_leave_window(self, event):
+        self.close_button.SetBackgroundColour(self.GetBackgroundColour())
+        self.close_button.Refresh()
+        event.Skip()
+
+    def print_title_sizer(self):
+        pass
 
     def print_screen(self):
         pass
@@ -61,21 +73,8 @@ class NoBorderFrame(wx.Frame):
         self.Destroy()
 
     def OnMouse(self, event):
-        # move like windows title bar
+
         if event.LeftDown():
-            self.CaptureMouse()
-            self.pos = event.GetPosition()
-
-        elif event.LeftUp():
-            self.ReleaseMouse()
-        #move like windows title bar
-        elif event.Dragging():
-            if self.HasCapture():
-                pos = event.GetPosition()
-
-                self.Move(self.GetPosition() + event.GetPosition())
-                self.pos = pos
-        '''if event.LeftDown():
             self.CaptureMouse()
             self.pos = event.GetPosition()
         elif event.LeftUp():
@@ -84,4 +83,4 @@ class NoBorderFrame(wx.Frame):
             if self.HasCapture():
                 self.Move(self.GetPosition() + event.GetPosition())
                 self.pos = event.GetPosition()
-        event.Skip()'''
+        event.Skip()

@@ -18,8 +18,6 @@ class EditPanel(wx.Panel):
         self.browser.LoadURL(get_file("\\html\\edit.html"))
         self.sizer.Add(self.browser, 1, wx.EXPAND, 0)
         self.SetSizer(self.sizer)
-        self.SetAutoLayout(True)
-        self.Centre(wx.BOTH)
 
         self.paper_title = paper_title
         #self._init_ui()
@@ -151,21 +149,18 @@ class EditFrame(EditFrame1):
     def OnPageLoaded(self, event):
         event.Skip()
 
-
 #test EditPanel
 if __name__ == '__main__':
     app = wx.App()
-    frame = wx.Frame(None)
-    sizer = wx.BoxSizer(wx.VERTICAL)
-    panel = EditPanel(frame)
-    sizer.Add(panel, 1, wx.EXPAND, 0)
-    '''panel = wx.Panel(frame)
+    frame = EditFrame(None)
+    frame.Show()
+    sizer = wx.BoxSizer()
+    panel = wx.Panel(frame)
     panel_sizer = wx.BoxSizer(wx.VERTICAL)
     browser = html2.WebView.New(panel, style=wx.BORDER_NONE)
     browser.LoadURL(get_file('\\html\\edit.html'))
     panel_sizer.Add(browser, 1, wx.EXPAND, 0)
     panel.SetSizer(panel_sizer)
-    sizer.Add(panel, 1, wx.EXPAND, 0)'''
-    frame.SetSizer(sizer)
-    frame.Show()
+    sizer.Add(panel, 1, wx.EXPAND, 0)
+    
     app.MainLoop()

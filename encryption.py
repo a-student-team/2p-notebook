@@ -23,8 +23,8 @@ def decrypt(message, key):
 
 #test
 if __name__ == '__main__':
-    message = "False撒旦法"
-    key = "1234"
+    message = "encrypt"
+    key = "123"
     encrypted = encrypt(message, key)
     decrypted = decrypt(encrypted, key)
     print(encrypted)

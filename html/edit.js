@@ -40,109 +40,13 @@ setText(text)
 function setBackgroundColor(color1, color2) {
     
     //设置背景颜色
+    document.getElementById("HandyEditor_editor").style.backgroundColor = "#63d8d8";
+    document.getElementById("HandyEditor_menu").style.backgroundColor = "#63d8d8";
     
-
-    document.getElementById("HandyEditor_editor").style.backgroundColor = eval(color2);
-    document.getElementById("HandyEditor_menu").style.backgroundColor = eval(color1);
     
 }
 //方法集
-function bold() {
-    he.bold();
-}
-
-function italic() {
-    he.italic();
-}
-
-function underline() {
-    he.underline();
-}
-
-function fontsize() { //
-    he.fontSize();
-}
-
-function fontname() { //
-    he.fontname();
-}
-
 function color() { //
     he.color();
 }
 
-function backcolor() { //
-    he.backcolor();
-}
-
-function center() {
-    he.center();
-}
-
-function left() {
-    he.left();
-}
-
-function right() {
-    he.right();
-}
-
-function full() { //两端对齐
-    he.full();
-}
-
-function indent() { //缩进
-    he.indent();
-}
-
-function outdent() { //取消缩进
-    he.outdent();
-}
-
-function link() { //
-    he.link();
-}
-
-function unlink() {
-    he.unlink();
-}
-
-function textblock() {
-    he.textblock();
-}
-
-function code() {
-    he.code();
-}
-
-function selectall() {
-    he.selectall();
-}
-
-function removeformat() {
-    he.removeformat();
-}
-
-function trash() {
-    he.trash();
-}
-
-function image() { //
-    he.image();
-}
-
-function orderedlist() {
-    he.orderedlist();
-}
-
-function unorderedlist() {
-    he.unorderedlist();
-}
-
-function undo() {
-    he.undo();
-}
-
-function redo() {
-    he.redo();
-}

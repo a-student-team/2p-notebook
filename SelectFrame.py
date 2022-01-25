@@ -1,8 +1,8 @@
-import imp
+
 import wx
 import wx.lib.agw.customtreectrl as ct
 class SelectImportDialog(wx.Dialog):
-    def __init__(self, parent, ):
+    def __init__(self, parent):
         super().__init__(parent, wx.ID_ANY, title="选择导入", size = (300, 700))
         # 创建面板
         sizer = wx.BoxSizer(wx.VERTICAL)

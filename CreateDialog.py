@@ -21,7 +21,7 @@ class CreateDialog (wx.Dialog):  # 名字输入框
         #让用户选择是否加密
         self.m_checkBox1 = wx.CheckBox(
             self, wx.ID_ANY, u"加密", wx.DefaultPosition, wx.DefaultSize, 0)
-        self.m_checkBox1.SetValue(True)
+        self.m_checkBox1.SetValue(False)
         if encrypt == True:
             
             bSizer5.Add(self.m_checkBox1, 0, wx.ALL, 5)

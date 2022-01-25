@@ -1,8 +1,8 @@
 import wx
-class SettingFrame(wx.Frame):
+class SettingDialog(wx.Dialog):
 
     def __init__(self, parent):
-        wx.Frame.__init__(self,
+        wx.Dialog.__init__(self,
                           parent,
                           id=wx.ID_ANY,
                           title=wx.EmptyString,
@@ -56,12 +56,13 @@ class SettingFrame(wx.Frame):
     def _init_theme_page(self):
         # theme page
         self.theme_sizer = wx.BoxSizer(wx.VERTICAL)
-        text = wx.StaticText(self.theme, wx.ID_ANY, u"外观设置不知道写啥的屑",
+        text = wx.StaticText(self.theme, wx.ID_ANY, u"主题设置不知道写啥的屑",
                              wx.DefaultPosition, wx.DefaultSize, 0)
         text.SetFont(
             wx.Font(18, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
                     wx.FONTWEIGHT_NORMAL, False, "Microsoft YaHei UI"))
         self.theme_sizer.Add(text, 0, wx.ALL | wx.ALIGN_CENTER, 5)
+        
         self.theme.SetSizer(self.theme_sizer)
         self.theme.Layout()
 

@@ -13,6 +13,7 @@ import wx.xrc
 from wx import html2
 import wx.lib.agw.customtreectrl as treectrl
 from EditFrame import EditPanel
+from NewNoteList import NewNoteList
 
 import os
 
@@ -31,14 +32,7 @@ def get_file(file_name):
 
 
 class MyFrame1(wx.Frame):
-    ID_THEME = wx.NewId()
-    ID_SETTING = wx.NewId()
-    ID_THEME_DEFAULT = wx.NewId()
-    ID_THEME_DARK = wx.NewId()
-    ID_THEME_LIGHT = wx.NewId()
-    ID_THEME_OTHER = wx.NewId()
-    ID_SELECT_OPEN = wx.NewId()
-    ID_SELECT_SAVE = wx.NewId()
+    
 
     def __init__(self, parent):
         wx.Frame.__init__(self,
@@ -47,7 +41,15 @@ class MyFrame1(wx.Frame):
                           title=u"NoteBook",
                           pos=wx.DefaultPosition,
                           size=wx.Size(1000, 700),
-                          style=wx.DEFAULT_FRAME_STYLE | wx.TAB_TRAVERSAL)
+                          style=wx.DEFAULT_FRAME_STYLE)
+        self.ID_THEME = wx.NewId()
+        self.ID_SETTING = wx.NewId()
+        self.ID_THEME_DEFAULT = wx.NewId()
+        self.ID_THEME_DARK = wx.NewId()
+        self.ID_THEME_LIGHT = wx.NewId()
+        self.ID_THEME_OTHER = wx.NewId()
+        self.ID_SELECT_OPEN = wx.NewId()
+        self.ID_SELECT_SAVE = wx.NewId()
         self.theme = {
             "kind": 1,
             "default_font": {
@@ -76,6 +78,7 @@ class MyFrame1(wx.Frame):
             }
         }  # theme dict
         self.SetSizeHints(wx.DefaultSize, wx.DefaultSize)
+        self.SetMinSize(wx.Size(1000, 700))
         self.SetFont(
             wx.Font(wx.NORMAL_FONT.GetPointSize(), wx.FONTFAMILY_DEFAULT,
                     wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL, False,
@@ -87,10 +90,6 @@ class MyFrame1(wx.Frame):
 
         self.image_list = wx.ImageList(16, 16)
         self.image_list.Add(wx.Bitmap(get_file('\\images\\encrypted.png')))
-
-
-        
-
 
         menubar = wx.MenuBar(0)
         toolMenu = wx.Menu()
@@ -137,7 +136,6 @@ class MyFrame1(wx.Frame):
         self.nearlyfileMenu.Append(self.file5)
 
         fileMenu.Append(wx.ID_ANY, u"最近打开", self.nearlyfileMenu)
-
         fileMenu.AppendSeparator()
         fileMenu.Append(wx.ID_SAVE, u"保存(&S)", wx.EmptyString, wx.ITEM_NORMAL)
         fileMenu.Append(wx.ID_SAVEAS, u"另存为", wx.EmptyString, wx.ITEM_NORMAL)
@@ -148,6 +146,7 @@ class MyFrame1(wx.Frame):
         fileMenu.Append(wx.ID_EXIT, u"退出", wx.EmptyString, wx.ITEM_NORMAL)
 
         helpMenu.Append(wx.ID_HELP, u"帮助", wx.EmptyString, wx.ITEM_NORMAL)
+        helpMenu.Append(wx.ID_HELP_COMMANDS, u"反馈", wx.EmptyString, wx.ITEM_NORMAL)
         menubar.Append(fileMenu, u"文件")
         menubar.Append(toolMenu, u"工具")
         menubar.Append(helpMenu, u"关于")
@@ -266,8 +265,9 @@ class MyFrame1(wx.Frame):
                 self.theme["default_font"]["face_name"]))
         self.time_text.SetForegroundColour(
             wx.Colour(eval(self.theme["time_text"]["colour"])))
+        
 
-        gbSizer2.Add(self.time_text, wx.GBPosition(0, 2), wx.GBSpan(1, 1),
+        gbSizer2.Add(self.time_text, wx.GBPosition(0, 2), wx.GBSpan(1, 2),
                      wx.ALL | wx.ALIGN_BOTTOM, 5)
 
         self.welcome = wx.StaticText(self.gbSizer2_panel, wx.ID_ANY, u"欢迎使用笔记本, 你可以....",
@@ -368,6 +368,80 @@ class MyFrame1(wx.Frame):
                 wx.BITMAP_TYPE_ANY))
         self.help_button.SetBitmapMargins(0, 0)
         self.help_button.SetBitmapPosition(wx.LEFT)
+
+        self.nearly_open_text = wx.StaticText(self.gbSizer2_panel, wx.ID_ANY, u"你最近打开了...",
+                                    wx.DefaultPosition, wx.DefaultSize, 0)
+        self.nearly_open_text.Wrap(-1)
+        self.nearly_open_text.SetFont(
+            wx.Font(self.theme["default_font"]["size"]+3, eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),wx.FONTWEIGHT_BOLD, False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"])
+        )
+        
+        gbSizer2.Add(self.nearly_open_text, wx.GBPosition(1, 2), wx.GBSpan(1, 1),
+                        wx.ALL, 5)
+        
+        self.nearly_open_button_more = wx.Button(self.gbSizer2_panel, wx.ID_ANY, u"查看更多", wx.DefaultPosition,
+                                wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE)
+        self.nearly_open_button_more.SetFont(
+            wx.Font(self.theme["default_font"]["size"]-3, eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+        self.nearly_open_button_more.SetForegroundColour(
+            wx.Colour(98, 148, 193))
+        self.nearly_open_button_more.SetBackgroundColour(
+            wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+
+        
+        
+
+        self.nearly_open_button = wx.Button(self.gbSizer2_panel, wx.ID_ANY, u"", wx.DefaultPosition,
+                                wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE)
+        self.nearly_open_button.SetFont(
+            wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+        self.nearly_open_button.SetBackgroundColour(
+            wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+
+        self.nearly_open_button2 = wx.Button(self.gbSizer2_panel, wx.ID_ANY, u"", wx.DefaultPosition,
+                                wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE)
+        self.nearly_open_button2.SetFont(
+            wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+        self.nearly_open_button2.SetBackgroundColour(
+            wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+
+        self.nearly_open_button3 = wx.Button(self.gbSizer2_panel, wx.ID_ANY, u"", wx.DefaultPosition,
+                                wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE)
+        self.nearly_open_button3.SetFont(
+            wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+        self.nearly_open_button3.SetBackgroundColour(
+            wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+
+        self.nearly_open_button4 = wx.Button(self.gbSizer2_panel, wx.ID_ANY, u"", wx.DefaultPosition,
+                                wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE)
+        self.nearly_open_button4.SetFont(
+            wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+        self.nearly_open_button4.SetBackgroundColour(
+            wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+
+        self.nearly_open_button.file_path = ""
+        self.nearly_open_button2.file_path = ""
+        self.nearly_open_button3.file_path = ""
+        self.nearly_open_button4.file_path = ""
+
+        
+
+        gbSizer2.Add(self.nearly_open_button_more, wx.GBPosition(1, 3), wx.GBSpan(1, 1),
+                        wx.ALL|wx.ALIGN_BOTTOM, 1)
+        gbSizer2.Add(self.nearly_open_button, wx.GBPosition(2, 2), wx.GBSpan(1, 2),
+                        wx.ALL, 5)
+        gbSizer2.Add(self.nearly_open_button2, wx.GBPosition(3, 2), wx.GBSpan(1, 2),
+                        wx.ALL, 5)
+        gbSizer2.Add(self.nearly_open_button3, wx.GBPosition(4, 2), wx.GBSpan(1, 2),    
+                        wx.ALL, 5)
+        gbSizer2.Add(self.nearly_open_button4, wx.GBPosition(5, 2), wx.GBSpan(1, 2),
+                        wx.ALL, 5)
+        
+        
+
+        
+
+
         
         
         gbSizer2.Add(self.help_button, wx.GBPosition(6, 0), wx.GBSpan(1, 1),
@@ -386,8 +460,6 @@ class MyFrame1(wx.Frame):
         self.m_panel26.SetSizer(gbSizer_right)
 
         self.m_panel26.Layout()
-        self.m_panel26.Refresh()
-        self.m_panel26.Update()
         
         gbSizer1.Add(self.m_panel26, wx.GBPosition(0, 1), wx.GBSpan(1, 1),
                      wx.EXPAND | wx.ALL, 0)
@@ -405,7 +477,7 @@ class MyFrame1(wx.Frame):
         gbSizer1.AddGrowableCol(1)
 
         gbSizer2.AddGrowableRow(6)
-        gbSizer2.AddGrowableCol(2)
+        gbSizer2.AddGrowableCol(3)
 
         self.timer = wx.Timer(self)  # 创建定时器
         self.Bind(wx.EVT_TIMER, self.change_time, self.timer)  # 绑定一个定时器事件
@@ -416,6 +488,11 @@ class MyFrame1(wx.Frame):
         self.m_button1.Bind(wx.EVT_BUTTON, self.new_paper)
         self.m_button11.Bind(wx.EVT_BUTTON, self.new_book)
         self.m_button111.Bind(wx.EVT_BUTTON, self.new_note)
+        self.nearly_open_button_more.Bind(wx.EVT_BUTTON, self.open_nearly_data_more)
+        self.nearly_open_button.Bind(wx.EVT_BUTTON, self.open_nearly_data)
+        self.nearly_open_button2.Bind(wx.EVT_BUTTON, self.open_nearly_data)
+        self.nearly_open_button3.Bind(wx.EVT_BUTTON, self.open_nearly_data)
+        self.nearly_open_button4.Bind(wx.EVT_BUTTON, self.open_nearly_data)
         self.help_button.Bind(wx.EVT_BUTTON, self.help)
         self.note_list.Bind(wx.EVT_TREE_BEGIN_LABEL_EDIT, self.edit_note)
         self.note_list.Bind(wx.EVT_TREE_END_LABEL_EDIT, self.edit_note_end)
@@ -431,11 +508,24 @@ class MyFrame1(wx.Frame):
         self.m_button11.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
         self.m_button111.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
         self.help_button.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
+        self.nearly_open_button.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
+        self.nearly_open_button2.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
+        self.nearly_open_button3.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
+        self.nearly_open_button4.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
+        
+        self.nearly_open_button_more.Bind(wx.EVT_ENTER_WINDOW, self.address_on_enter_window)
+        
 
         self.m_button1.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
         self.m_button11.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
         self.m_button111.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
         self.help_button.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
+        self.nearly_open_button.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
+        self.nearly_open_button2.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
+        self.nearly_open_button3.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
+        self.nearly_open_button4.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
+
+        self.nearly_open_button_more.Bind(wx.EVT_LEAVE_WINDOW, self.address_on_leave_window)
 
         self.Bind(wx.EVT_CHAR_HOOK, self.on_key_down)
         #当窗口大小改变时，更新大小
@@ -445,6 +535,18 @@ class MyFrame1(wx.Frame):
         pass
 
     # Virtual event handlers, override them in your derived class
+    def address_on_enter_window(self, event):
+        event.Skip()
+
+    def address_on_leave_window(self, event):
+        event.Skip()
+
+    def open_nearly_data_more(self, event):
+        event.Skip()
+
+    def open_nearly_data(self, event):
+        event.Skip()
+    
     def on_size(self, event):
         event.Skip()
 
@@ -470,10 +572,10 @@ class MyFrame1(wx.Frame):
         event.Skip()
 
     def edit_note(self, event):
-        event.Veto()
+        event.Skip()
 
     def edit_note_end(self, event):
-        event.Veto()
+        event.Skip()
 
     def new_paper(self, event):
         event.Skip()
@@ -494,45 +596,7 @@ class MyFrame1(wx.Frame):
         event.Skip()
 
 
-
-
-
-
-
-
-class NewNoteList(treectrl.CustomTreeCtrl):
-    '''
-    一个树罢了
-    '''
-
-    def __init__(self, parent):
-        super().__init__(
-            parent, wx.ID_ANY, wx.DefaultPosition, wx.Size(300, 700), agwStyle=treectrl.TR_HAS_BUTTONS|treectrl.TR_FULL_ROW_HIGHLIGHT|treectrl.TR_ELLIPSIZE_LONG_ITEMS|treectrl.TR_TOOLTIP_ON_LONG_ITEMS
-            |treectrl.TR_HAS_VARIABLE_ROW_HEIGHT)
-        panel_font = self.GetFont()
-        panel_font.SetPointSize(panel_font.GetPointSize() + 1)
-        self.SetFont(panel_font)
-        self.SetBackgroundColour(wx.Colour(255, 255, 255))
-        self.EnableSelectionGradient(False)
-        self.SetSpacing(20)
-        self.SetIndent(10)
-        self.SetImageList(wx.ImageList(16, 16))
-
-        
-        
-
-
-        
-
-
-class MyApp(wx.App):
-
-    def OnInit(self):
-        MyFrame1(None).Show()
-
-        return True
-
-
 if __name__ == "__main__":
-    app = MyApp()
+    app = wx.App()
+    MyFrame1(None).Show()
     app.MainLoop()

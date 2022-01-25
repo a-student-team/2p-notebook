@@ -11,7 +11,6 @@ class HelpFrame(wx.Frame):
         sizer = wx.BoxSizer(wx.VERTICAL)
         sizer.Add(html, 1, wx.EXPAND)
         self.SetSizer(sizer)
-        self.SetAutoLayout(True)
         self.Show()
         icon = wx.Icon(get_file('\\images\\icon.ico'), wx.BITMAP_TYPE_ICO)
         self.SetIcon(icon)
