@@ -14,6 +14,7 @@ from wx import html2
 import wx.lib.agw.customtreectrl as treectrl
 from EditFrame import EditPanel
 from NewNoteList import NewNoteList
+from static.MButton import MButton
 
 import os
 
@@ -284,9 +285,7 @@ class MyFrame1(wx.Frame):
             wx.Colour(welcome_font_colour))
         gbSizer2.Add(self.welcome, wx.GBPosition(1, 0), wx.GBSpan(1, 1), wx.ALL, 5)
 
-        self.m_button1 = wx.Button(self.gbSizer2_panel, wx.ID_ANY, u"添加新的笔记",)
-        #无边框
-        self.m_button1.SetWindowStyle(wx.BORDER_NONE)
+        self.m_button1 = MButton(self.gbSizer2_panel, u"添加新的笔记",)
         #添加图标
         self.m_button1.SetBitmap(
             wx.Bitmap(
@@ -305,9 +304,8 @@ class MyFrame1(wx.Frame):
         gbSizer2.Add(self.m_button1, wx.GBPosition(2, 0), wx.GBSpan(1, 1),
                      wx.TOP | wx.RIGHT | wx.LEFT, 15)
 
-        self.m_button11 = wx.Button(
-            self.gbSizer2_panel, wx.ID_ANY, u"添加新的笔记本", wx.DefaultPosition,
-            wx.DefaultSize,  wx.BORDER_NONE | wx.BORDER_SIMPLE
+        self.m_button11 = MButton(
+            self.gbSizer2_panel, u"添加新的笔记本", wx.BORDER_NONE | wx.BORDER_SIMPLE
             | wx.BORDER_THEME)
         self.m_button11.SetFont(
             wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
@@ -324,9 +322,8 @@ class MyFrame1(wx.Frame):
         gbSizer2.Add(self.m_button11, wx.GBPosition(3, 0), wx.GBSpan(1, 1),
                      wx.TOP | wx.RIGHT | wx.LEFT, 15)
 
-        self.m_button111 = wx.Button(
-            self.gbSizer2_panel, wx.ID_ANY, u"添加新的便签", wx.DefaultPosition,
-            wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE
+        self.m_button111 = MButton(
+            self.gbSizer2_panel, u"添加新的便签", wx.BORDER_NONE | wx.BORDER_SIMPLE
             | wx.BORDER_THEME)
             
         self.m_button111.SetFont(
@@ -355,8 +352,7 @@ class MyFrame1(wx.Frame):
             wx.Colour(help_text_colour))
         gbSizer2.Add(self.help_text, wx.GBPosition(5, 0), wx.GBSpan(1, 1),
                         wx.ALL, 5)
-        self.help_button = wx.Button(self.gbSizer2_panel, wx.ID_ANY, u"帮助", wx.DefaultPosition,
-                                wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE
+        self.help_button = MButton(self.gbSizer2_panel, u"帮助", wx.BORDER_NONE | wx.BORDER_SIMPLE
                                 | wx.BORDER_THEME)
         self.help_button.SetFont(
             wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
@@ -379,41 +375,37 @@ class MyFrame1(wx.Frame):
         gbSizer2.Add(self.nearly_open_text, wx.GBPosition(1, 2), wx.GBSpan(1, 1),
                         wx.ALL, 5)
         
-        self.nearly_open_button_more = wx.Button(self.gbSizer2_panel, wx.ID_ANY, u"查看更多", wx.DefaultPosition,
-                                wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE)
+        self.nearly_open_button_more = MButton(self.gbSizer2_panel, u"查看更多", wx.BORDER_NONE)
         self.nearly_open_button_more.SetFont(
             wx.Font(self.theme["default_font"]["size"]-3, eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
-        self.nearly_open_button_more.SetForegroundColour(
-            wx.Colour(98, 148, 193))
-        self.nearly_open_button_more.SetBackgroundColour(
-            wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+        self.nearly_open_button_more.default_fore = (98, 148, 193)
+        self.nearly_open_button_more.default_back = eval(self.theme["notebook_right"]["colour"])
+        self.nearly_open_button_more.enter_back = (118, 134, 148)
+        self.nearly_open_button_more.enter_fore = (46, 177, 240)
+        self.nearly_open_button_more.refresh()
 
         
         
 
-        self.nearly_open_button = wx.Button(self.gbSizer2_panel, wx.ID_ANY, u"", wx.DefaultPosition,
-                                wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE)
+        self.nearly_open_button = MButton(self.gbSizer2_panel, u"", wx.BORDER_NONE | wx.BORDER_SIMPLE)
         self.nearly_open_button.SetFont(
             wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
         self.nearly_open_button.SetBackgroundColour(
             wx.Colour(eval(self.theme["notebook_right"]["colour"])))
 
-        self.nearly_open_button2 = wx.Button(self.gbSizer2_panel, wx.ID_ANY, u"", wx.DefaultPosition,
-                                wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE)
+        self.nearly_open_button2 = MButton(self.gbSizer2_panel, u"", wx.BORDER_NONE | wx.BORDER_SIMPLE)
         self.nearly_open_button2.SetFont(
             wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
         self.nearly_open_button2.SetBackgroundColour(
             wx.Colour(eval(self.theme["notebook_right"]["colour"])))
 
-        self.nearly_open_button3 = wx.Button(self.gbSizer2_panel, wx.ID_ANY, u"", wx.DefaultPosition,
-                                wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE)
+        self.nearly_open_button3 = MButton(self.gbSizer2_panel,  u"", wx.BORDER_NONE | wx.BORDER_SIMPLE)
         self.nearly_open_button3.SetFont(
             wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
         self.nearly_open_button3.SetBackgroundColour(
             wx.Colour(eval(self.theme["notebook_right"]["colour"])))
 
-        self.nearly_open_button4 = wx.Button(self.gbSizer2_panel, wx.ID_ANY, u"", wx.DefaultPosition,
-                                wx.DefaultSize, wx.BORDER_NONE | wx.BORDER_SIMPLE)
+        self.nearly_open_button4 = MButton(self.gbSizer2_panel, u"", wx.BORDER_NONE | wx.BORDER_SIMPLE)
         self.nearly_open_button4.SetFont(
             wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
         self.nearly_open_button4.SetBackgroundColour(
@@ -503,29 +495,7 @@ class MyFrame1(wx.Frame):
         self.note_list.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.open_note)
         self.Bind(wx.EVT_CLOSE, self.on_close)
         
-
-        self.m_button1.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
-        self.m_button11.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
-        self.m_button111.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
-        self.help_button.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
-        self.nearly_open_button.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
-        self.nearly_open_button2.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
-        self.nearly_open_button3.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
-        self.nearly_open_button4.Bind(wx.EVT_ENTER_WINDOW, self.on_enter_window)
         
-        self.nearly_open_button_more.Bind(wx.EVT_ENTER_WINDOW, self.address_on_enter_window)
-        
-
-        self.m_button1.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
-        self.m_button11.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
-        self.m_button111.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
-        self.help_button.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
-        self.nearly_open_button.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
-        self.nearly_open_button2.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
-        self.nearly_open_button3.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
-        self.nearly_open_button4.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
-
-        self.nearly_open_button_more.Bind(wx.EVT_LEAVE_WINDOW, self.address_on_leave_window)
 
        
         self.Bind(wx.EVT_KEY_DOWN, self.on_key_down)

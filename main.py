@@ -51,13 +51,8 @@ class MainFrame(MyFrame1):
             self.write_data_to_file()
 
         self._update_nearlyfile()
-        
-        
-        
-        
-        
-            
         self.refresh_note_list_from_note_data()
+
     def refresh_note_list_from_note_data(self):
         self.note_list.DeleteAllItems()
         self.note_list.AddRoot("所有笔记")
@@ -134,7 +129,6 @@ class MainFrame(MyFrame1):
                 
                 data = eval(f.read())
                 self.file_path = data
-                self._update_nearlyfile()
                 return True
         except:
             return False
@@ -157,15 +151,18 @@ class MainFrame(MyFrame1):
                 return True
         except:
             return False
-    def write_data_to_file(self, file_path=get_file("\\data\\main.data"), data=None):
+    def write_more_data_to_file(self, file_path=get_file("\\data\\main.data"), data=None):
         #write data to file
         try:
-            with open(file_path, 'w', encoding="utf-8") as f:
-                f.write(str(data))
+            with open(file_path, 'w+', encoding="utf-8") as f:
+                if data:
+                    f.write(str(data))
+                else:
+                    f.write(str(self.file_path))
                 return True
         except:
             return False
-    def get_data_in_file(self, file_path=get_file("\\data\\main.data")):
+    def get_more_data_in_file(self, file_path=get_file("\\data\\main.data")):
         #get data in file
         try:
             with open(file_path, "r", encoding="utf-8") as f:
@@ -627,12 +624,71 @@ class MainFrame(MyFrame1):
                 wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
             self.nearly_open_button4.SetFont(
                 wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+            self.nearly_open_button_more.SetFont(
+            wx.Font(self.theme["default_font"]["size"]-3, eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
             
-            self.on_enter_window(None)
-            self.on_leave_window(None)
+            self.m_button1.default_back = eval(self.theme["notebook_right"]["colour"])
+            font_colour = eval(self.theme["notebook_right"]["colour"])
+            #颜色取反
+            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
+            self.m_button1.default_fore = (font_colour)
 
-            self.address_on_enter_window(None)
-            self.address_on_leave_window(None)
+            self.m_button11.default_back = wx.Colour(eval(self.theme["notebook_right"]["colour"]))
+            font_colour = eval(self.theme["notebook_right"]["colour"])
+            #颜色取反
+            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
+            self.m_button11.default_fore = (font_colour)
+
+            self.m_button111.default_back = eval(self.theme["notebook_right"]["colour"])
+            font_colour = eval(self.theme["notebook_right"]["colour"])
+            #颜色取反
+            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
+            self.m_button111.default_fore = (font_colour)
+
+            self.help_button.default_back = eval(self.theme["notebook_right"]["colour"])
+            font_colour = eval(self.theme["notebook_right"]["colour"])
+            #颜色取反
+            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
+            self.help_button.default_fore = (font_colour)
+
+            self.nearly_open_button.default_back = eval(self.theme["notebook_right"]["colour"])
+            font_colour = eval(self.theme["notebook_right"]["colour"])
+            #颜色取反
+            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
+            self.nearly_open_button.default_fore = (font_colour)
+
+            self.nearly_open_button2.default_back = eval(self.theme["notebook_right"]["colour"])
+            font_colour = eval(self.theme["notebook_right"]["colour"])
+            #颜色取反
+            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
+            self.nearly_open_button2.default_fore = (font_colour)
+
+            self.nearly_open_button3.default_back = eval(self.theme["notebook_right"]["colour"])
+            font_colour = eval(self.theme["notebook_right"]["colour"])
+            #颜色取反
+            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
+            self.nearly_open_button3.default_fore = (font_colour)
+
+            self.nearly_open_button4.default_back = eval(self.theme["notebook_right"]["colour"])
+            font_colour = eval(self.theme["notebook_right"]["colour"])
+            #颜色取反
+            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
+            self.nearly_open_button4.default_fore = (font_colour)
+
+            self.nearly_open_button_more.default_back = eval(self.theme["notebook_right"]["colour"])
+            
+            self.m_button1.refresh()
+            self.m_button11.refresh()
+            self.m_button111.refresh()
+            self.help_button.refresh()
+            self.nearly_open_button.refresh()
+            self.nearly_open_button2.refresh()
+            self.nearly_open_button3.refresh()
+            self.nearly_open_button4.refresh()
+            self.nearly_open_button_more.refresh()
+            self.nearly_open_button_more.refresh()
+
+            
             
             #try:
                 #self.frame.browser.RunScript(
@@ -658,122 +714,6 @@ class MainFrame(MyFrame1):
         app.Show()
         app.open(1)
 
-    def on_enter_window(self, event=None):
-        if event:
-            self.SetCursor(wx.Cursor(wx.CURSOR_HAND))
-            #change button background color
-            event.GetEventObject().SetBackgroundColour(
-                wx.Colour(39, 44, 52))
-            event.GetEventObject().SetForegroundColour(
-                wx.Colour(255, 255, 255))
-        else:
-            self.m_button1.SetBackgroundColour(
-                wx.Colour(39, 44, 52))
-            self.m_button1.SetForegroundColour(
-                wx.Colour(255, 255, 255))
-
-            self.m_button11.SetBackgroundColour(
-                wx.Colour(39, 44, 52))
-            self.m_button11.SetForegroundColour(
-                wx.Colour(255, 255, 255))
-
-            self.m_button111.SetBackgroundColour(
-                wx.Colour(39, 44, 52))
-            self.m_button111.SetForegroundColour(
-                wx.Colour(255, 255, 255))
-
-            self.help_button.SetBackgroundColour(
-                wx.Colour(39, 44, 52))
-            self.help_button.SetForegroundColour(
-                wx.Colour(255, 255, 255))
-
-            self.nearly_open_button.SetBackgroundColour(
-                wx.Colour(39, 44, 52))
-            self.nearly_open_button.SetForegroundColour(
-                wx.Colour(255, 255, 255))
-
-            self.nearly_open_button2.SetBackgroundColour(
-                wx.Colour(39, 44, 52))
-            self.nearly_open_button2.SetForegroundColour(
-                wx.Colour(255, 255, 255))
-
-            self.nearly_open_button3.SetBackgroundColour(
-                wx.Colour(39, 44, 52))
-            self.nearly_open_button3.SetForegroundColour(
-                wx.Colour(255, 255, 255))
-
-            self.nearly_open_button4.SetBackgroundColour(
-                wx.Colour(39, 44, 52))
-            self.nearly_open_button4.SetForegroundColour(
-                wx.Colour(255, 255, 255))
-
-    def on_leave_window(self, event=None):
-        if event:
-            self.SetCursor(wx.Cursor(wx.CURSOR_DEFAULT))
-            #change button background color
-            event.GetEventObject().SetBackgroundColour(
-                wx.Colour(eval(self.theme["notebook_right"]["colour"])))
-            font_colour = eval(self.theme["notebook_right"]["colour"])
-            #颜色取反
-            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
-            event.GetEventObject().SetForegroundColour(wx.Colour(font_colour))
-        else:
-            #刷新一遍按钮
-            self.m_button1.SetBackgroundColour(
-                wx.Colour(eval(self.theme["notebook_right"]["colour"])))
-            font_colour = eval(self.theme["notebook_right"]["colour"])
-            #颜色取反
-            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
-            self.m_button1.SetForegroundColour(wx.Colour(font_colour))
-
-            self.m_button11.SetBackgroundColour(
-                wx.Colour(eval(self.theme["notebook_right"]["colour"])))
-            font_colour = eval(self.theme["notebook_right"]["colour"])
-            #颜色取反
-            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
-            self.m_button11.SetForegroundColour(wx.Colour(font_colour))
-
-            self.m_button111.SetBackgroundColour(
-                wx.Colour(eval(self.theme["notebook_right"]["colour"])))
-            font_colour = eval(self.theme["notebook_right"]["colour"])
-            #颜色取反
-            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
-            self.m_button111.SetForegroundColour(wx.Colour(font_colour))
-
-            self.help_button.SetBackgroundColour(
-                wx.Colour(eval(self.theme["notebook_right"]["colour"])))
-            font_colour = eval(self.theme["notebook_right"]["colour"])
-            #颜色取反
-            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
-            self.help_button.SetForegroundColour(wx.Colour(font_colour))
-
-            self.nearly_open_button.SetBackgroundColour(
-                wx.Colour(eval(self.theme["notebook_right"]["colour"])))
-            font_colour = eval(self.theme["notebook_right"]["colour"])
-            #颜色取反
-            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
-            self.nearly_open_button.SetForegroundColour(wx.Colour(font_colour))
-
-            self.nearly_open_button2.SetBackgroundColour(
-                wx.Colour(eval(self.theme["notebook_right"]["colour"])))
-            font_colour = eval(self.theme["notebook_right"]["colour"])
-            #颜色取反
-            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
-            self.nearly_open_button2.SetForegroundColour(wx.Colour(font_colour))
-
-            self.nearly_open_button3.SetBackgroundColour(
-                wx.Colour(eval(self.theme["notebook_right"]["colour"])))
-            font_colour = eval(self.theme["notebook_right"]["colour"])
-            #颜色取反
-            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
-            self.nearly_open_button3.SetForegroundColour(wx.Colour(font_colour))
-
-            self.nearly_open_button4.SetBackgroundColour(
-                wx.Colour(eval(self.theme["notebook_right"]["colour"])))
-            font_colour = eval(self.theme["notebook_right"]["colour"])
-            #颜色取反
-            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
-            self.nearly_open_button4.SetForegroundColour(wx.Colour(font_colour))
 
     '''def on_key_down(self, event):
         key = event.GetKeyCode()
@@ -801,6 +741,7 @@ class MainFrame(MyFrame1):
             return None
         if file_path not in self.file_path:
             self.file_path.append(file_path)
+        
         self._update_nearlyfile()
         self.note_list.DeleteAllItems()
         self.note_list.AddRoot("所有笔记")
@@ -850,6 +791,13 @@ class MainFrame(MyFrame1):
         if import_file_path_lst:
             for file_path in import_file_path_lst:
                 self.get_note_data_in_file(file_path)
+                self.note_list.DeleteAllItems()
+                self.note_list.AddRoot("所有笔记")
+                for book in self.note_data:
+                    book_item = self.note_list.AppendItem(self.note_list.GetRootItem(), book)
+                    for note in self.note_data[book]:
+                        self.note_list.AppendItem(book_item, note)
+                self.note_list.ExpandAll()
             
     
     def __del__(self):
@@ -876,6 +824,7 @@ class MainFrame(MyFrame1):
     def menuHandler(self, event):
         id = event.GetId()
         print(id)
+        
         if id == wx.ID_NEW:
             self.new_paper(event)
         elif id == wx.ID_REFRESH:
@@ -986,6 +935,7 @@ class MainFrame(MyFrame1):
                 for note in self.note_data[book]:
                     self.note_list.AppendItem(book_item, note)
             self.note_list.ExpandAll()
+            print(self.file_path)
             #self.note_list.Expand(self.root)
             
         dlg.Destroy()
@@ -996,6 +946,12 @@ class MainFrame(MyFrame1):
         name = CreateDialog(self).m_textCtrl1.GetValue()
         #如果root所在的note_data的笔记本有"key"键, 则提醒用户解密
         if name == '':
+            return None
+        if root == self.note_list.GetRootItem():
+            dialog = wx.MessageDialog(
+                self, '"所有笔记"不能重命名', '提示', wx.OK | wx.ICON_INFORMATION)
+            dialog.ShowModal()
+            dialog.Destroy()
             return None
         if self.note_list.GetItemParent(root) == self.note_list.GetRootItem():
             if self.note_data[self.note_list.GetItemText(root)].get("key") != None:
