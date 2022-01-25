@@ -380,7 +380,7 @@ class MyFrame1(wx.Frame):
             wx.Font(self.theme["default_font"]["size"]-3, eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
         self.nearly_open_button_more.default_fore = (98, 148, 193)
         self.nearly_open_button_more.default_back = eval(self.theme["notebook_right"]["colour"])
-        self.nearly_open_button_more.enter_back = (118, 134, 148)
+        self.nearly_open_button_more.enter_back = eval(self.theme["notebook_right"]["colour"])
         self.nearly_open_button_more.enter_fore = (46, 177, 240)
         self.nearly_open_button_more.refresh()
 

@@ -676,7 +676,7 @@ class MainFrame(MyFrame1):
             self.nearly_open_button4.default_fore = (font_colour)
 
             self.nearly_open_button_more.default_back = eval(self.theme["notebook_right"]["colour"])
-            
+            self.nearly_open_button_more.enter_back = eval(self.theme["notebook_right"]["colour"])
             self.m_button1.refresh()
             self.m_button11.refresh()
             self.m_button111.refresh()
@@ -788,6 +788,7 @@ class MainFrame(MyFrame1):
         dialog = NearlyFileDialog(self, self.file_path)
         dialog.ShowModal()
         import_file_path_lst = dialog.check_file_path
+        print(import_file_path_lst)
         if import_file_path_lst:
             for file_path in import_file_path_lst:
                 self.get_note_data_in_file(file_path)
