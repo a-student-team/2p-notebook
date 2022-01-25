@@ -77,13 +77,14 @@ class FastNote(NoBorderFrame):  # 便签
                                                         "请选择操作",
                                                         "更多",
                                                         ["另存为本地文件", "当做笔记存入笔记本", "取消置顶"],
-                                                        wx.CHOICEDLG_STYLE)
+                                                        wx.CHOICEDLG_STYLE|wx.RESIZE_BORDER)
+
         else:
             self.more_dialog = wx.SingleChoiceDialog(self,
                                                         "请选择操作",
                                                         "更多",
                                                         ["另存为本地文件", "当做笔记存入笔记本", "置顶"],
-                                                        wx.CHOICEDLG_STYLE)
+                                                        wx.CHOICEDLG_STYLE|wx.RESIZE_BORDER)
         if self.more_dialog.ShowModal() == wx.ID_OK:
             if self.more_dialog.GetStringSelection() == "另存为本地文件":
                 save_as(self.m_textCtrl2.GetValue())
