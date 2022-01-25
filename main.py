@@ -53,9 +53,14 @@ class MainFrame(MyFrame1):
         self._update_nearlyfile()
         
         
+        
+        
+        
+            
+        self.refresh_note_list_from_note_data()
+    def refresh_note_list_from_note_data(self):
         self.note_list.DeleteAllItems()
         self.note_list.AddRoot("所有笔记")
-        
         for book in self.note_data:
             print(book)
             if self.note_data[book]['type'] == 1:
@@ -68,9 +73,7 @@ class MainFrame(MyFrame1):
                 if t == "type" or t == "key":
                     continue
                 self.note_list.AppendItem(book_item, t)
-            
         self.note_list.ExpandAll()
-        
     def _note_in_note_data(self, note, root=None):
         # check if note in note_data
         if not root:
@@ -774,13 +777,14 @@ class MainFrame(MyFrame1):
 
     '''def on_key_down(self, event):
         key = event.GetKeyCode()
+        print(key)
         #按下ctrl+s保存
         if event.ControlDown() and key == 83:
             self.save()
         #按下ctrl+o打开
         if event.ControlDown() and key == 79:
-            self.open()'''
-
+            self.open()
+'''
     def open_nearly_data(self, event):
         #get the event object'text and open the paper
         file_path = event.GetEventObject().file_path
@@ -850,8 +854,9 @@ class MainFrame(MyFrame1):
     
     def __del__(self):
         pass
+
     def new_note(self, event):
-        self.fastnote = FastNote(None)
+        self.fastnote = FastNote(self)
         self.fastnote.Show()
 
     def show_menu(self, event):

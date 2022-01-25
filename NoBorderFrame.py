@@ -35,12 +35,16 @@ class NoBorderFrame(wx.Frame):
             self.close_bitmap,
             style=wx.BU_AUTODRAW | wx.BORDER_NONE | wx.BU_RIGHT,
             size=(30, 30))
+
+        
+
         # set background color like frame
         self.close_button.SetBackgroundColour(self.GetBackgroundColour())
-        self.close_button.Bind(wx.EVT_ENTER_WINDOW, self.close_btn_enter_window)
-        self.close_button.Bind(wx.EVT_LEAVE_WINDOW, self.close_btn_leave_window)
+        self.close_button.Bind(wx.EVT_ENTER_WINDOW, self.btn_enter_window)
+        self.close_button.Bind(wx.EVT_LEAVE_WINDOW, self.btn_leave_window)
 
         self.sizer.Add(self.close_button, 0, wx.ALL | wx.ALIGN_RIGHT, 0)
+        
         self.print_title_sizer()
         self.Layout()
         self.main_sizer.Add(self.sizer, 0, wx.ALL | wx.ALIGN_RIGHT, 0)
@@ -53,14 +57,16 @@ class NoBorderFrame(wx.Frame):
         self.close_button.Bind(wx.EVT_BUTTON, self.OnClose)
         self.Bind(wx.EVT_MOUSE_EVENTS, self.OnMouse)
     
-    def close_btn_enter_window(self, event):
-        self.close_button.SetBackgroundColour(wx.Colour(245, 90, 83))
-        self.close_button.Refresh()
+    def btn_enter_window(self, event, colour=(245, 90, 83)):
+        btn = event.GetEventObject()
+        btn.SetBackgroundColour(wx.Colour(colour[0], colour[1], colour[2]))
+        btn.Refresh()
         event.Skip()
     
-    def close_btn_leave_window(self, event):
-        self.close_button.SetBackgroundColour(self.GetBackgroundColour())
-        self.close_button.Refresh()
+    def btn_leave_window(self, event):
+        btn = event.GetEventObject()
+        btn.SetBackgroundColour(self.GetBackgroundColour())
+        btn.Refresh()
         event.Skip()
 
     def print_title_sizer(self):

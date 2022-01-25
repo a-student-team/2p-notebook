@@ -527,7 +527,10 @@ class MyFrame1(wx.Frame):
 
         self.nearly_open_button_more.Bind(wx.EVT_LEAVE_WINDOW, self.address_on_leave_window)
 
-        self.Bind(wx.EVT_CHAR_HOOK, self.on_key_down)
+       
+        self.Bind(wx.EVT_KEY_DOWN, self.on_key_down)
+        
+        
         #当窗口大小改变时，更新大小
         '''self.edit_panel.Bind(wx.EVT_SIZE, self.on_size)'''
 
