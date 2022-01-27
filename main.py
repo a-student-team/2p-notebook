@@ -3,7 +3,7 @@ import wx
 
 
 from get_file import get_file
-from EditFrame import EditFrame, EditFrame1
+from EditFrame import EditFrame
 from CreateDialog import CreateDialog
 from FastNote import FastNote
 from SettingDialog import SettingDialog
@@ -13,6 +13,7 @@ from HelpFrame import HelpFrame
 from SelectFrame import SelectImportDialog, SelectExportDialog
 from AboutFrame import AboutFrame
 from NearlyFileDialog import NearlyFileDialog
+from TimeFrame import TimeFrame
 import os
 import time
 import json
@@ -31,15 +32,10 @@ class MainFrame(MyFrame1):
         self._note_list_is_changed = False
         # the data like {'book':{'type':'1','note':'content',...},...}
         self.note_data = {}
-
-
+        self.date_event = {} #存储日程表的信息, like {'date':[{'event':'event1','time':'time1...}..],...}
         
 
         self.temp_text = "" #temp text for edit_browser
-
-        #self.before_encry_book_string = "NgsAABwEVA=="
-        self.before_encry_book_string = "N"
-        
         
         #import data
         if self.get_note_data_in_file() == False:
@@ -115,9 +111,10 @@ class MainFrame(MyFrame1):
     def write_data_to_file(self):
         #write data to file
         try:
+            data = {"file_path": self.file_path, "date_event": self.date_event}
             with open(get_file('\\data\\main.data'), 'w', encoding="utf-8") as f:
                 
-                f.write(str(self.file_path))
+                f.write(str(data))
                 return True
         except:
             return False
@@ -125,10 +122,11 @@ class MainFrame(MyFrame1):
     def get_data_in_file(self):
         #get data in file
         try:
-            with open(get_file("\\data\\main.data"), "r", encoding="utf-8") as f:
-                
+            with open(get_file('\\data\\main.data'), 'r', encoding="utf-8") as f:
                 data = eval(f.read())
-                self.file_path = data
+                self.file_path = data['file_path']
+                self.date_event = data['date_event']
+                print(self.date_event)
                 return True
         except:
             return False
@@ -277,6 +275,7 @@ class MainFrame(MyFrame1):
         # if save, use funcion save()
 
         self.write_data_to_file()
+
         if self._note_list_is_changed:
             dialog = wx.MessageDialog(
                 self, '是否保存笔记', '提示', wx.YES_NO | wx.ICON_INFORMATION)
@@ -626,6 +625,9 @@ class MainFrame(MyFrame1):
                 wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
             self.nearly_open_button_more.SetFont(
             wx.Font(self.theme["default_font"]["size"]-3, eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+            self.calendar_button.SetFont(
+                wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+            
             
             self.m_button1.default_back = eval(self.theme["notebook_right"]["colour"])
             font_colour = eval(self.theme["notebook_right"]["colour"])
@@ -675,6 +677,14 @@ class MainFrame(MyFrame1):
             font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
             self.nearly_open_button4.default_fore = (font_colour)
 
+            self.calendar_button.default_back = eval(self.theme["notebook_right"]["colour"])
+            font_colour = eval(self.theme["notebook_right"]["colour"])
+            #颜色取反
+            font_colour = (255 - font_colour[0], 255 - font_colour[1], 255 - font_colour[2])
+            self.calendar_button.default_fore = (font_colour)
+
+
+
             self.nearly_open_button_more.default_back = eval(self.theme["notebook_right"]["colour"])
             self.nearly_open_button_more.enter_back = eval(self.theme["notebook_right"]["colour"])
             self.m_button1.refresh()
@@ -687,7 +697,9 @@ class MainFrame(MyFrame1):
             self.nearly_open_button4.refresh()
             self.nearly_open_button_more.refresh()
             self.nearly_open_button_more.refresh()
-
+            self.calendar_button.refresh()
+            self.m_button1.SetBackgroundColour(eval(self.theme["notebook_right"]["colour"]))
+            
             
             
             #try:
@@ -695,7 +707,6 @@ class MainFrame(MyFrame1):
                     #"setBackgroundColor({}, {})".format(str(self.theme["notebook_left"]["colour"]), str(self.theme["notebook_right"]["colour"])))
             #except:
                 #pass
-            
 
             self.Refresh()
             self.Update()
@@ -950,7 +961,7 @@ class MainFrame(MyFrame1):
             return None
         if root == self.note_list.GetRootItem():
             dialog = wx.MessageDialog(
-                self, '"所有笔记"不能重命名', '提示', wx.OK | wx.ICON_INFORMATION)
+                self, '笔记区开头不能重命名', '提示', wx.OK | wx.ICON_INFORMATION)
             dialog.ShowModal()
             dialog.Destroy()
             return None
@@ -1021,8 +1032,59 @@ class MainFrame(MyFrame1):
         self.gbSizer2_panel.Show()
         
         self.note_list_is_changed()
+    def on_search(self, event):
+        #get the search text, and search the note_data, and show the result in the note_list
+        #if the search text is empty, show all the note_data
+        search_text = self.m_searchCtrl1.GetValue()
+        if search_text == '':
+            self.refresh_note_list_from_note_data()
+            self.m_searchCtrl1.ShowCancelButton(False)
+            return None
+        self.m_searchCtrl1.ShowCancelButton(True)
+        self.note_list.DeleteAllItems()
+        self.note_list.AddRoot('搜索结果')
+        #the note_data is a dict but like tree, it has two levels, use the best way to search
+        for key in self.note_data:
+            if key.find(search_text) != -1:
+                self.note_list.AppendItem(self.note_list.GetRootItem(), key)
+            for key2 in self.note_data[key]:
+                if key2.find(search_text) != -1:
+                    self.note_list.AppendItem(self.note_list.GetLastChild(self.note_list.GetRootItem()), key2)
+        
+        self.note_list.Expand(self.note_list.GetRootItem())
+        self.note_list.ExpandAll()
 
-    
+    def on_search_cancel(self, event):
+        self.m_searchCtrl1.SetValue('')
+        if self.note_list.GetItemText(self.note_list.GetRootItem()) == "搜索结果":
+            self.refresh_note_list_from_note_data()
+
+    def on_calendar_button(self, event):
+        self.timeframe = TimeFrame(self, self.date_event)
+        self.timeframe.Bind(wx.EVT_CLOSE, self._on_timeframe_close)
+
+
+    def _on_timeframe_close(self, event):
+        self.date_event = self.timeframe.date_event
+        self.timeframe.Destroy()
+
+    def clock(self, event):
+        #通过date_event获取今天的日期, 判断事件的时间是否已经到了, 如果到了, 则提醒用户
+        tp = time.strftime('%Y-%m-%d', time.localtime())
+        if tp not in self.date_event:
+            return None
+        #if time.strftime('%H:%M', time.localtime()) in self.date_event[tp]:
+        tp1 = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())
+        for event_range in range(len(self.date_event[tp])):
+            if self.date_event[tp][event_range]["time"] == tp1:
+                dialog = wx.MessageDialog(self, '事件[{}]的时间已经到了\n地点:{}\n备注:{}'.format(self.date_event[tp][event_range]["event"], self.date_event[tp][event_range]["place"] if self.date_event[tp][event_range]["place"] != "" else "无", self.date_event[tp][event_range]["remark"] if self.date_event[tp][event_range]["remark"] != "" else "无"), '提醒', wx.OK | wx.ICON_INFORMATION)
+                dialog.ShowModal()
+                dialog.Destroy()
+                return None
+        return None
+                
+
+
     
 
 

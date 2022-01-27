@@ -1,4 +1,3 @@
-from tkinter import Button
 from wx import Button
 from wx import EVT_ENTER_WINDOW, EVT_LEAVE_WINDOW
 import wx
@@ -14,6 +13,7 @@ class MButton(Button):
         
 
         self.SetAutoLayout(True)
+        self.refresh()
 
     def on_enter_window(self, event):
         self.SetCursor(wx.Cursor(wx.CURSOR_HAND))

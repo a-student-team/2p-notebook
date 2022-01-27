@@ -8,11 +8,7 @@
 ###########################################################################
 
 import wx
-from wx.core import BLACK
 import wx.xrc
-from wx import html2
-import wx.lib.agw.customtreectrl as treectrl
-from EditFrame import EditPanel
 from NewNoteList import NewNoteList
 from static.MButton import MButton
 
@@ -187,6 +183,15 @@ class MyFrame1(wx.Frame):
         bSizer5.Add(self.m_staticText9, 0, wx.ALL | wx.ALIGN_CENTER_HORIZONTAL,
                     5)
 
+        #搜索框
+        self.m_searchCtrl1 = wx.SearchCtrl(self.m_panel10, wx.ID_ANY,
+                                             wx.EmptyString, wx.DefaultPosition,
+                                                wx.DefaultSize, style=wx.TE_PROCESS_ENTER)
+        self.m_searchCtrl1.ShowSearchButton(True)
+
+        bSizer5.Add(self.m_searchCtrl1, 0, wx.ALL | wx.EXPAND,
+                    5)
+
         self.note_list = NewNoteList(self.m_panel10)
         self.note_list.SetForegroundColour(
             wx.Colour(eval(self.theme["default_font"]["colour"])))
@@ -322,6 +327,24 @@ class MyFrame1(wx.Frame):
         gbSizer2.Add(self.m_button11, wx.GBPosition(3, 0), wx.GBSpan(1, 1),
                      wx.TOP | wx.RIGHT | wx.LEFT, 15)
 
+        self.calendar_button = MButton(
+            self.gbSizer2_panel, u"查看日程表", wx.BORDER_NONE | wx.BORDER_SIMPLE
+            | wx.BORDER_THEME)
+        self.calendar_button.SetFont(
+            wx.Font(self.theme["default_font"]["size"], eval(self.theme["default_font"]["family"]), eval(self.theme["default_font"]["style"]),eval(self.theme["default_font"]["weight"]), False if self.theme["default_font"]["underline"] == "false" else True, self.theme["default_font"]["face_name"]))
+        self.calendar_button.SetBackgroundColour(
+            wx.Colour(eval(self.theme["notebook_right"]["colour"])))
+        #添加图标
+        self.calendar_button.SetBitmap(
+            wx.Bitmap(
+                get_file("\\images\\new_calendar.png"),
+                wx.BITMAP_TYPE_ANY))
+        self.calendar_button.SetBitmapMargins(0, 0)
+        self.calendar_button.SetBitmapPosition(wx.LEFT)
+
+        gbSizer2.Add(self.calendar_button, wx.GBPosition(4, 0), wx.GBSpan(1, 1),
+                        wx.TOP | wx.RIGHT | wx.LEFT, 15)
+
         self.m_button111 = MButton(
             self.gbSizer2_panel, u"添加新的便签", wx.BORDER_NONE | wx.BORDER_SIMPLE
             | wx.BORDER_THEME)
@@ -332,7 +355,7 @@ class MyFrame1(wx.Frame):
             wx.Colour(eval(self.theme["notebook_right"]["colour"])))
         
 
-        gbSizer2.Add(self.m_button111, wx.GBPosition(4, 0), wx.GBSpan(1, 1),
+        gbSizer2.Add(self.m_button111, wx.GBPosition(5, 0), wx.GBSpan(1, 1),
                      wx.ALL, 15)
         
                         
@@ -350,7 +373,7 @@ class MyFrame1(wx.Frame):
         help_text_colour = (255 - help_text_colour[0], 255 - help_text_colour[1], 255 - help_text_colour[2])
         self.help_text.SetForegroundColour(
             wx.Colour(help_text_colour))
-        gbSizer2.Add(self.help_text, wx.GBPosition(5, 0), wx.GBSpan(1, 1),
+        gbSizer2.Add(self.help_text, wx.GBPosition(6, 0), wx.GBSpan(1, 1),
                         wx.ALL, 5)
         self.help_button = MButton(self.gbSizer2_panel, u"帮助", wx.BORDER_NONE | wx.BORDER_SIMPLE
                                 | wx.BORDER_THEME)
@@ -436,7 +459,7 @@ class MyFrame1(wx.Frame):
 
         
         
-        gbSizer2.Add(self.help_button, wx.GBPosition(6, 0), wx.GBSpan(1, 1),
+        gbSizer2.Add(self.help_button, wx.GBPosition(7, 0), wx.GBSpan(1, 1),
                         wx.TOP | wx.RIGHT | wx.LEFT, 15)
         
         self.gbSizer2_panel.SetSizer(gbSizer2)
@@ -468,15 +491,19 @@ class MyFrame1(wx.Frame):
         gbSizer1.AddGrowableRow(0)
         gbSizer1.AddGrowableCol(1)
 
-        gbSizer2.AddGrowableRow(6)
+        gbSizer2.AddGrowableRow(7)
         gbSizer2.AddGrowableCol(3)
 
         self.timer = wx.Timer(self)  # 创建定时器
         self.Bind(wx.EVT_TIMER, self.change_time, self.timer)  # 绑定一个定时器事件
+        self.Bind(wx.EVT_TIMER, self.clock, self.timer)
         self.timer.Start(1000)  # 设定时间间隔为1秒
 
         # Connect Events
-
+        self.calendar_button.Bind(wx.EVT_BUTTON, self.on_calendar_button)
+        self.m_searchCtrl1.Bind(wx.EVT_TEXT, self.on_search)
+        self.m_searchCtrl1.Bind(wx.EVT_SEARCHCTRL_CANCEL_BTN, self.on_search_cancel)
+        self.m_searchCtrl1.Bind(wx.EVT_SEARCHCTRL_SEARCH_BTN, self.on_search_search)
         self.m_button1.Bind(wx.EVT_BUTTON, self.new_paper)
         self.m_button11.Bind(wx.EVT_BUTTON, self.new_book)
         self.m_button111.Bind(wx.EVT_BUTTON, self.new_note)
@@ -494,6 +521,8 @@ class MyFrame1(wx.Frame):
         
         self.note_list.Bind(wx.EVT_TREE_ITEM_ACTIVATED, self.open_note)
         self.Bind(wx.EVT_CLOSE, self.on_close)
+
+
         
         
 
@@ -508,6 +537,21 @@ class MyFrame1(wx.Frame):
         pass
 
     # Virtual event handlers, override them in your derived class
+    def clock(self, event):
+        event.Skip()
+
+    def on_calendar_button(self, event):
+        event.Skip()
+
+    def on_search_search(self, event):
+        event.Skip()
+
+    def on_search_cancel(self, event):
+        event.Skip()
+
+    def on_search(self, event):
+        event.Skip()
+
     def address_on_enter_window(self, event):
         event.Skip()
 
