@@ -3,6 +3,7 @@ import time
 import wx
 from NoBorderFrame import NoBorderFrame
 from get_file import get_file
+from wx.richtext import RichTextCtrl
 class FastNote(NoBorderFrame):  # 便签
 
     def __init__(self, parent):
@@ -15,6 +16,19 @@ class FastNote(NoBorderFrame):  # 便签
         self.parent = parent
         self.SetWindowStyle(wx.STAY_ON_TOP)
         self.Centre(wx.BOTH)
+        self.Bind(wx.EVT_CHAR_HOOK , self.OnKeyDown)
+
+    def OnKeyDown(self, event):
+        #按下Ctrl+F显示/隐藏self.sizer
+        print("key")
+        if event.ControlDown() and event.GetKeyCode() == 70:
+            if self.main_sizer.IsShown(self.sizer):
+                self.main_sizer.Hide(self.sizer)
+            else:
+                self.main_sizer.Show(self.sizer)
+            self.main_sizer.Layout()
+        else:
+            event.Skip()
 
     def print_title_sizer(self):
         self.font_size_btn = wx.Button(self,
@@ -76,14 +90,13 @@ class FastNote(NoBorderFrame):  # 便签
             self.more_dialog = wx.SingleChoiceDialog(self,
                                                         "请选择操作",
                                                         "更多",
-                                                        ["另存为本地文件", "当做笔记存入笔记本", "取消置顶"],
+                                                        ["另存为本地文件", "当做笔记存入笔记本", "取消置顶", "更改为专注模式"],
                                                         wx.CHOICEDLG_STYLE|wx.RESIZE_BORDER)
-
         else:
             self.more_dialog = wx.SingleChoiceDialog(self,
                                                         "请选择操作",
                                                         "更多",
-                                                        ["另存为本地文件", "当做笔记存入笔记本", "置顶"],
+                                                        ["另存为本地文件", "当做笔记存入笔记本", "置顶", "更改为专注模式"],
                                                         wx.CHOICEDLG_STYLE|wx.RESIZE_BORDER)
         if self.more_dialog.ShowModal() == wx.ID_OK:
             if self.more_dialog.GetStringSelection() == "另存为本地文件":
@@ -122,6 +135,18 @@ class FastNote(NoBorderFrame):  # 便签
                 self.SetWindowStyle(wx.STAY_ON_TOP)
             elif self.more_dialog.GetStringSelection() == "取消置顶":
                 self.SetWindowStyle(self.GetWindowStyle()^wx.STAY_ON_TOP)
+
+            elif self.more_dialog.GetStringSelection() == "更改为专注模式":
+                self.main_sizer.Hide(self.sizer)
+                #提醒用户Ctrl+F键显示sizer
+                dialog = wx.MessageDialog(self,
+                                            "按Ctrl+F键更改为专注模式/普通模式",
+                                            "提示",
+                                            wx.OK | wx.ICON_INFORMATION)
+                dialog.ShowModal()
+                dialog.Destroy()
+                self.main_sizer.Layout()
+                
         self.more_dialog.Destroy()
 
     def OnFontSize(self, event):
@@ -146,7 +171,7 @@ class FastNote(NoBorderFrame):  # 便签
 
     def print_screen(self):
 
-        self.m_textCtrl2 = wx.TextCtrl(self,
+        self.m_textCtrl2 = RichTextCtrl(self,
                                        wx.ID_ANY,
                                        wx.EmptyString,
                                        wx.DefaultPosition,

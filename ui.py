@@ -495,8 +495,7 @@ class MyFrame1(wx.Frame):
         gbSizer2.AddGrowableCol(3)
 
         self.timer = wx.Timer(self)  # 创建定时器
-        self.Bind(wx.EVT_TIMER, self.change_time, self.timer)  # 绑定一个定时器事件
-        self.Bind(wx.EVT_TIMER, self.clock, self.timer)
+        self.Bind(wx.EVT_TIMER, self.on_timer, self.timer)  # 绑定一个定时器事件
         self.timer.Start(1000)  # 设定时间间隔为1秒
 
         # Connect Events
@@ -523,11 +522,13 @@ class MyFrame1(wx.Frame):
         self.Bind(wx.EVT_CLOSE, self.on_close)
 
 
+
+
         
         
 
        
-        self.Bind(wx.EVT_KEY_DOWN, self.on_key_down)
+        self.Bind(wx.EVT_CHAR_HOOK, self.on_key_down)
         
         
         #当窗口大小改变时，更新大小
@@ -537,6 +538,8 @@ class MyFrame1(wx.Frame):
         pass
 
     # Virtual event handlers, override them in your derived class
+    def on_timer(self, event):
+        event.Skip()
     def clock(self, event):
         event.Skip()
 

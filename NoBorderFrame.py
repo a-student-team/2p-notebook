@@ -80,13 +80,14 @@ class NoBorderFrame(wx.Frame):
 
     def OnMouse(self, event):
 
-        if event.LeftDown():
+        if event.LeftDown()  and not event.Dragging():
             self.CaptureMouse()
             self.pos = event.GetPosition()
+            #self.pos_win = self.pos_win[0] + self.diff[0], self.pos_win[1] + self.diff[1]
         elif event.LeftUp():
             self.ReleaseMouse()
         elif event.Dragging():
             if self.HasCapture():
-                self.Move(self.GetPosition() + event.GetPosition())
-                self.pos = event.GetPosition()
+                self.SetPosition(self.GetPosition() + event.GetPosition() - self.pos)
+                #self.pos = event.GetPosition()
         event.Skip()

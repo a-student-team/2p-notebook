@@ -726,16 +726,18 @@ class MainFrame(MyFrame1):
         app.open(1)
 
 
-    '''def on_key_down(self, event):
-        key = event.GetKeyCode()
-        print(key)
+    def on_key_down(self, event):
         #按下ctrl+s保存
-        if event.ControlDown() and key == 83:
-            self.save()
-        #按下ctrl+o打开
-        if event.ControlDown() and key == 79:
-            self.open()
-'''
+        if event.ControlDown():
+            key = event.GetKeyCode()
+            if key == 83:
+                self.save()
+            #按下ctrl+o打开
+            elif key == 79:
+                self.open()
+        else:
+            event.Skip()
+
     def open_nearly_data(self, event):
         #get the event object'text and open the paper
         file_path = event.GetEventObject().file_path
@@ -1083,6 +1085,9 @@ class MainFrame(MyFrame1):
                 return None
         return None
                 
+    def on_timer(self, event):
+        self.clock(event)
+        self.change_time(event)
 
 
     
